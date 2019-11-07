@@ -1,0 +1,22 @@
+{
+  "name": "gpm",
+  "version": "1.0.0",
+  "description": "Git Package Manager",
+  "main": "./lib/index.js",
+  "bin": {
+    "gpm": "./bin/gpm"
+  },
+  "scripts": {
+    "test": "./vendor/bmocha/bin/bmocha --reporter spec test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/braydonf/gpm.git"
+  },
+  "author": "Braydon Fuller",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/braydonf/gpm/issues"
+  },
+  "homepage": "https://github.com/braydonf/gpm#readme"
+}
