@@ -20,11 +20,29 @@ const assert = require('assert');
 const {randomBytes} = require('crypto');
 const {resolve} = require('path');
 const {tmpdir} = require('os');
-const {expandSrc, listTags, matchTag, clone} = require('../');
+
+const {
+  expandSrc,
+  listTags,
+  matchTag,
+  clone,
+  archive,
+  checksum,
+  listTree,
+  treeHash,
+  cloneFiles
+} = require('../');
 
 describe('Git Package Manager', function() {
   const datadir = resolve(__dirname, './data');
-  const testdir = `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}`;
+
+  function testdir() {
+    return `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}`;
+  }
+
+  function testfile(name) {
+    return `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}-${name}`;
+  }
 
   const remotes = {
     file: [
@@ -117,7 +135,72 @@ describe('Git Package Manager', function() {
     let err = null;
 
     try {
-      await clone(remotes, 'file:repo@~1.1.0', testdir);
+      await clone(remotes, 'file:repo@~1.1.0', testdir());
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+  });
+
+  it('should archive and checksum repository', async () => {
+    const git = `${datadir}/repo/.git`;
+    let err = null;
+
+    const dst = `${testfile('archive.tar.gz')}`;
+    const expected = '+sXeok+a/rLq3Zm+R3E204qf+6by2DjMXzkGR2ZtFQ/S'
+          + 'nWBL1X+k+s5Jld5CWMgLZFnERZi8Y8zlbkU+ZohIfw==';
+
+    try {
+      await archive(git, dst);
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+
+    let digest = null;
+
+    try {
+      digest = await checksum(dst, 'sha512');
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+    assert(digest);
+    assert.equal(digest.toString('base64'), expected);
+  });
+
+  it('should compute a sha512 tree of git tree', async () => {
+    const git = `${datadir}/repo/.git`;
+
+    let err = null;
+    let digest = null;
+
+    try {
+      digest = await treeHash(git, 'sha512');
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+    assert(digest);
+
+    const expected = 'nAZBtfyzjm8gPbFkISlFF2knE6HI/l9kQ+Vc5Sch5wzk'
+          + '+GNn7lcvzirz0M83XWfBN/Cv+n1ZCjiriFr/sFkkcw==';
+
+    assert(digest);
+    assert.equal(digest.toString('base64'), expected);
+  });
+
+  it('should clone files to destination', async () => {
+    let err = null;
+    const git = `${datadir}/repo/.git`;
+    const dst = testdir();
+
+    try {
+      await cloneFiles(git, dst);
     } catch (e) {
       err = e;
     }
