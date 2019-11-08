@@ -7,7 +7,7 @@
     "gpm": "./bin/gpm"
   },
   "scripts": {
-    "test": "./vendor/bmocha/bin/bmocha --reporter spec test/**/*.js"
+    "test": "./vendor/bmocha/bin/bmocha --reporter spec test/**/*-test.js"
   },
   "repository": {
     "type": "git",

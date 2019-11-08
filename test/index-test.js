@@ -17,9 +17,14 @@
 'use strict';
 
 const assert = require('assert');
+const util = require('util');
 const {randomBytes} = require('crypto');
 const {resolve} = require('path');
 const {tmpdir} = require('os');
+const fs = require('fs');
+const mkdir = util.promisify(fs.mkdir);
+const child_process = require('child_process');
+const exec = util.promisify(child_process.exec);
 
 const {
   expandSrc,
@@ -30,7 +35,9 @@ const {
   checksum,
   listTree,
   treeHash,
-  cloneFiles
+  cloneFiles,
+  locatePkg,
+  install
 } = require('../');
 
 describe('Git Package Manager', function() {
@@ -42,6 +49,11 @@ describe('Git Package Manager', function() {
 
   function testfile(name) {
     return `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}-${name}`;
+  }
+
+  async function unpack(tar, dst) {
+    const cmd = `tar xf ${tar} -C ${dst}`
+    const {stdout, stderr} = await exec(cmd);
   }
 
   const remotes = {
@@ -206,5 +218,37 @@ describe('Git Package Manager', function() {
     }
 
     assert(!err);
+  });
+
+  it('should locate and read package.json', async () => {
+    let err = null;
+
+    const cwd = `${datadir}/modules/foo/lib`;
+
+    const {root, pkg} = await locatePkg(cwd);
+
+    assert.equal(root, `${datadir}/modules/foo`);
+    assert.deepEqual(pkg, {
+      name: 'foo',
+      version: '1.0.0',
+      main: './lib/index.js',
+      remotes: {
+        file: ['../'],
+      },
+      dependencies: {
+        bar: 'file:bar@^1.0.0',
+        baz: 'file:baz@^1.0.0'
+      }
+    });
+  });
+
+  it('should install dependencies', async () => {
+    // Setup the test modules.
+    const modules = testdir();
+    await mkdir(modules);
+    await unpack(`${datadir}/modules.tar.gz`, modules);
+
+    // Install the dependencies of foo module.
+    await install(`${modules}/modules/foo`);
   });
 });
