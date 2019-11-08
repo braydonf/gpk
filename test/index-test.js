@@ -225,8 +225,8 @@ describe('Git Package Manager', function() {
     assert(!err);
     assert(digest);
 
-    const expected = 'igbXIOim9X0NRErAteeEUQvGciEOFOJ1gl88qVb+385Q'
-          + 'i7aabJwW5AKhUe+7+MY6OYtPCHwFjm1lJ9JAQ6RfUw==';
+    const expected = '5wtrttD9yjVEQgmQY4mXWTzIpN5dLh6peY2gAIvu8dpv'
+          + '6NMlo+E1Bf9acr5gjNtuUQtuOkaopWeOzpeNm8VU1Q==';
 
     assert(digest);
     assert.equal(digest.toString('base64'), expected);
@@ -262,7 +262,9 @@ describe('Git Package Manager', function() {
         local: ['file:../'],
       },
       dependencies: {
-        bar: 'local:bar@^1.0.0'
+        bar: 'local:bar@^1.0.0',
+        beep: 'local:beep@^1.0.0',
+        bloop: 'local:bloop@^1.0.0'
       }
     });
   });
