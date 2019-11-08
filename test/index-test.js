@@ -76,7 +76,10 @@ describe('Git Package Manager', function() {
   it('should parse source', () => {
     const vectors = [
       {
-        input: 'github:bcoin-org/bdb@~1.1.7',
+        input: {
+          name: 'bdb',
+          src: 'github:bcoin-org/bdb@~1.1.7',
+        },
         output: {
           git: [
             'https://github.com/bcoin-org/bdb.git'
@@ -85,7 +88,10 @@ describe('Git Package Manager', function() {
         }
       },
       {
-        input: 'gitlab:bcoin-org/bdb@~1.1.7',
+        input: {
+          name: 'bdb',
+          src: 'gitlab:bcoin-org/bdb@~1.1.7',
+        },
         output: {
           git: [
             'https://gitlab.com/bcoin-org/bdb.git'
@@ -94,7 +100,10 @@ describe('Git Package Manager', function() {
         }
       },
       {
-        input: 'onion:bcoin/bcoin@~1.1.7',
+        input: {
+          name: 'bcoin',
+          src: 'onion:bcoin/bcoin@~1.1.7'
+        },
         output: {
           git: [
             'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22/bcoin/bcoin.git',
@@ -105,7 +114,22 @@ describe('Git Package Manager', function() {
         }
       },
       {
-        input: 'local:repo@~1.1.7',
+        input: {
+          name: 'repo',
+          src: 'local:repo@~1.1.7'
+        },
+        output: {
+          git: [
+            `${datadir}/repo/.git`
+          ],
+          version: '~1.1.7'
+        }
+      },
+      {
+        input: {
+          name: 'repo',
+          src: 'local:@~1.1.7'
+        },
         output: {
           git: [
             `${datadir}/repo/.git`
@@ -116,7 +140,7 @@ describe('Git Package Manager', function() {
     ];
 
     for (const {input, output} of vectors) {
-      const src = expandSrc(datadir, remotes, input);
+      const src = expandSrc(datadir, remotes, input.name, input.src);
       assert.deepEqual(src, output);
     }
   });
