@@ -30,7 +30,7 @@ const {
   expandSrc,
   listTags,
   matchTag,
-  clone,
+  cloneRepo,
   archive,
   checksum,
   listTree,
@@ -43,8 +43,8 @@ const {
 describe('Git Package Manager', function() {
   const datadir = resolve(__dirname, './data');
 
-  function testdir() {
-    return `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}`;
+  function testdir(name) {
+    return `${tmpdir()}/gpm-test-${name}-${randomBytes(4).toString('hex')}`;
   }
 
   function testfile(name) {
@@ -57,8 +57,8 @@ describe('Git Package Manager', function() {
   }
 
   const remotes = {
-    file: [
-      datadir
+    local: [
+      `file:${datadir}`
     ],
     onion: [
       'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22',
@@ -105,7 +105,7 @@ describe('Git Package Manager', function() {
         }
       },
       {
-        input: 'file:repo@~1.1.7',
+        input: 'local:repo@~1.1.7',
         output: {
           git: [
             `${datadir}/repo/.git`
@@ -116,7 +116,7 @@ describe('Git Package Manager', function() {
     ];
 
     for (const {input, output} of vectors) {
-      const src = expandSrc(remotes, input);
+      const src = expandSrc(datadir, remotes, input);
       assert.deepEqual(src, output);
     }
   });
@@ -145,9 +145,11 @@ describe('Git Package Manager', function() {
 
   it('should clone and verify signature', async () => {
     let err = null;
+    const git = `${datadir}/repo/.git`;
+    const tag = 'v1.1.0'
 
     try {
-      await clone(remotes, 'file:repo@~1.1.0', testdir());
+      await cloneRepo(tag, git, testdir('clone'));
     } catch (e) {
       err = e;
     }
@@ -199,8 +201,8 @@ describe('Git Package Manager', function() {
     assert(!err);
     assert(digest);
 
-    const expected = 'nAZBtfyzjm8gPbFkISlFF2knE6HI/l9kQ+Vc5Sch5wzk'
-          + '+GNn7lcvzirz0M83XWfBN/Cv+n1ZCjiriFr/sFkkcw==';
+    const expected = 'igbXIOim9X0NRErAteeEUQvGciEOFOJ1gl88qVb+385Q'
+          + 'i7aabJwW5AKhUe+7+MY6OYtPCHwFjm1lJ9JAQ6RfUw==';
 
     assert(digest);
     assert.equal(digest.toString('base64'), expected);
@@ -209,7 +211,7 @@ describe('Git Package Manager', function() {
   it('should clone files to destination', async () => {
     let err = null;
     const git = `${datadir}/repo/.git`;
-    const dst = testdir();
+    const dst = testdir('clonefiles');
 
     try {
       await cloneFiles(git, dst);
@@ -233,18 +235,17 @@ describe('Git Package Manager', function() {
       version: '1.0.0',
       main: './lib/index.js',
       remotes: {
-        file: ['../'],
+        local: ['file:../'],
       },
       dependencies: {
-        bar: 'file:bar@^1.0.0',
-        baz: 'file:baz@^1.0.0'
+        bar: 'local:bar@^1.0.0'
       }
     });
   });
 
   it('should install dependencies', async () => {
     // Setup the test modules.
-    const modules = testdir();
+    const modules = testdir('install');
     await mkdir(modules);
     await unpack(`${datadir}/modules.tar.gz`, modules);
 
