@@ -1,6 +1,6 @@
 # Git Package Manager
 
-Decentralized and secure package managment for JavaScript and Node.js
+Decentralized and secure package management for JavaScript and Node.js
 libraries and applications.
 
 ## Features
@@ -11,7 +11,7 @@ libraries and applications.
 - Package integrity using strong hash algorithms (e.g. `sha512`).
 - Redundancy of packages, multiple remotes can be listed for the
   availability of packages.
-- Resolves sharded dependencies based on semantic versioning via Git
+- Resolves shared dependencies based on semantic versioning via Git
   tags (e.g. `v1.1.0`).
 
 ## Usage
