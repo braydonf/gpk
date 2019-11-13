@@ -28,17 +28,21 @@ const exec = util.promisify(child_process.exec);
 
 const {
   expandSrc,
-  listTags,
   matchTag,
+  locatePkg,
+  rebuild,
+  install
+} = require('../lib/gpm');
+
+const {
+  listTags,
   cloneRepo,
   archive,
-  checksum,
   listTree,
+  checksum,
   treeHash,
-  cloneFiles,
-  locatePkg,
-  install
-} = require('../');
+  cloneFiles
+} = require('../lib/git');
 
 describe('Git Package Manager', function() {
   const datadir = resolve(__dirname, './data');

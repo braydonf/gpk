@@ -4,7 +4,8 @@
 
 process.title = 'gpm';
 
-const {processArgs, install} = require('../');
+const {install} = require('../lib/gpm');
+const {processArgs} = require('../lib/cli');
 
 const config = {
   'production': {
