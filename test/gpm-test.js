@@ -150,6 +150,28 @@ describe('Git Package Manager', function() {
     }
   });
 
+  it('should parse legacy package', () => {
+    const vectors = [
+      {
+        input: {
+          name: 'repo',
+          src: '~1.1.7'
+        },
+        output: {
+          git: [],
+          version: '~1.1.7'
+        }
+      }
+    ];
+
+    const remotes = undefined;
+
+    for (const {input, output} of vectors) {
+      const src = expandSrc(datadir, remotes, input.name, input.src);
+      assert.deepEqual(src, output);
+    }
+  });
+
   it('should find all tags', async () => {
     const git = `${datadir}/repo/.git`;
 
