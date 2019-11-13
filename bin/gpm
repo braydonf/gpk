@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'gpm';
+
+const {processArgs, install} = require('../');
+
+const config = {
+  'production': {
+    value: false,
+    valid: a => (a === true || a === false),
+    fallback: false
+  }
+};
+
+const cmds = ['install'];
+const {cmd, settings} = processArgs(process.argv, config, cmds);
+
+(async () => {
+  const cwd = process.cwd();
+
+  switch (cmd) {
+    case 'install':
+      await install(cwd);
+      break;
+    default:
+      console.log('Unrecognized command.');
+  }
+})();
