@@ -2,7 +2,7 @@
   "name": "gpm",
   "version": "1.0.0",
   "description": "Git Package Manager",
-  "main": "./lib/index.js",
+  "main": "./lib/gpm.js",
   "bin": {
     "gpm": "./bin/gpm"
   },
