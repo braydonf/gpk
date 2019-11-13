@@ -28,4 +28,7 @@ const {cmd, settings} = processArgs(process.argv, config, cmds);
     default:
       console.log('Unrecognized command.');
   }
-})();
+})().catch((err) => {
+  console.error(err.stack);
+  process.exit(1);
+});
