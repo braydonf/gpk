@@ -37,6 +37,7 @@ const {
 const {
   listTags,
   cloneRepo,
+  verifyRepo,
   archive,
   listTree,
   checksum,
@@ -153,7 +154,23 @@ describe('Git Package Manager', function() {
     const git = `${datadir}/repo/.git`;
 
     const tags = await listTags(git);
-    assert.deepEqual(tags, ['v1.0.0','v1.1.0','v2.0.0']);
+    assert.deepEqual(tags, {
+      'v1.0.0': {
+        annotated: 'dff7f77c1a6f17cefec11342a6e410ab83c8488a',
+        commit: '35c9aaaffc27f295981e996a24a0cb9cd7a84ecb'
+      },
+      'v1.1.0': {
+        annotated: '94071e59398891cb2cfd183045237c2494923459',
+        commit: '36ea09f31e77f24a796722adfa51eb62dac043fa'
+      },
+      'v2.0.0': {
+        annotated: '0ab87dcfe1dc8c327b1d8b8e9fa78bb1839ea86f',
+        commit: '294acab444f9742a7c1d0de273b7a412e7809e52'
+      },
+      'v2.1.0': {
+        commit: '3d2115aa2e86d8c08ce1639d177757aa1ce85799'
+      }
+    });
   });
 
   it('should find matching semver tags', async () => {
@@ -174,10 +191,47 @@ describe('Git Package Manager', function() {
   it('should clone and verify signature', async () => {
     let err = null;
     const git = `${datadir}/repo/.git`;
-    const tag = 'v1.1.0'
+    const tag = 'v1.1.0';
+    const dst = testdir('clone');
 
     try {
-      await cloneRepo(tag, git, testdir('clone'));
+      await cloneRepo(tag, git, dst);
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+
+    try {
+      await verifyRepo(tag, null, dst);
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+  });
+
+  it('should clone and verify lightweight tag', async () => {
+    let err = null;
+    const git = `${datadir}/repo/.git`;
+
+    // The tag was created lightweight via `git tag v2.1.0` instead of
+    // `git tag -a v2.1.0 -m "v2.1.0"`. Thus the command `git verify-tag`
+    // can not be used.
+    const tag = 'v2.1.0';
+    const commit = '3d2115aa2e86d8c08ce1639d177757aa1ce85799';
+    const dst = testdir('clonelight');
+
+    try {
+      await cloneRepo(tag, git, dst);
+    } catch (e) {
+      err = e;
+    }
+
+    assert(!err);
+
+    try {
+      await verifyRepo(null, commit, dst);
     } catch (e) {
       err = e;
     }
@@ -190,8 +244,8 @@ describe('Git Package Manager', function() {
     let err = null;
 
     const dst = `${testfile('archive.tar.gz')}`;
-    const expected = '+sXeok+a/rLq3Zm+R3E204qf+6by2DjMXzkGR2ZtFQ/S'
-          + 'nWBL1X+k+s5Jld5CWMgLZFnERZi8Y8zlbkU+ZohIfw==';
+    const expected = 'wNVracPFLWusleCon1AQu+ngVEmjZpliCCgUY2bcfVLr'
+          + 'JCrun9NOVAMM8XgUH3+A4gpbY2JEjmm1+yPii1wiAQ==';
 
     try {
       await archive(git, dst);
