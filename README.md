@@ -16,7 +16,28 @@ libraries and applications.
 
 ## Usage
 
-Here is as example of how dependencies are specified in `package.json`:
+### Dependencies
+
+Here is how to specify dependencies in `package.json`:
+
+```json
+{
+  "dependencies": {
+    "bcoin": "git+https://github.com/bcoin-org/bcoin.git#semver:~2.0.0",
+    "bcrypto": "git+https://github.com/bcoin-org/bcrypto.git#semver:~4.2.6",
+    "bmultisig": "git+https://github.com/bcoin-org/bmultisig.git#semver:~2.0.0",
+    "buffer-map": "git+https://github.com/chjj/buffer-map.git#semver:~0.0.7",
+    "n64": "git+https://github.com/chjj/n64.git#semver:~0.2.10"
+  }
+}
+```
+The signature of the matching Git tag or commit is verified for each
+dependency. The dependencies must be from a Git repository. The referenced
+Git tag or commit must be signed and the necessary public keys imported.
+
+### Multiple remotes for dependencies
+
+Here is how multiple remotes can be listed for dependencies in `package.json`:
 
 ```json
 {
@@ -25,19 +46,16 @@ Here is as example of how dependencies are specified in `package.json`:
     "chjj": ["https://github.com/chjj"],
   },
   "dependencies": {
-    "bcoin": "bcoin:@~2.0.0",
-    "bcrypto": "bcoin:@~4.2.6",
-    "bmultisig": "bcoin:@~2.0.0",
-    "buffer-map": "chjj:@~0.0.7",
-    "n64": "chjj:@~0.2.10"
+    "bcoin": "bcoin:#semver:~2.0.0",
+    "bcrypto": "bcoin:#semver:~4.2.6",
+    "bmultisig": "bcoin:#semver:~2.0.0",
+    "buffer-map": "chjj:#semver:~0.0.7",
+    "n64": "chjj:#semver:~0.2.10"
   }
 }
 ```
 
 The `remotes` list available namespaces and repository mirrors. For
 example the `bcoin` dependency would resolve into the repository url
-`https://github.com/bcoin-org/bcoin.git`. A lockfile specifies the exact
-tag to checkout that is verified by a `sha512` integrity hash. The
-dependency can then be upgraded to the latest tagged version that
-satisfies `~2.0.0`, for example `v2.0.20` and the signature of that
-tag is verified.
+`https://github.com/bcoin-org/bcoin.git`. If the repository name
+is not included it will use the dependency name.
