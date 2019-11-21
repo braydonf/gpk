@@ -78,7 +78,7 @@ describe('Git Package Manager', function() {
     ]
   };
 
-  it('should parse source', () => {
+  describe('should parse multiple remote source', () => {
     const vectors = [
       {
         input: {
@@ -89,7 +89,8 @@ describe('Git Package Manager', function() {
           git: [
             'https://github.com/bcoin-org/bdb.git'
           ],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null,
         }
       },
       {
@@ -101,7 +102,8 @@ describe('Git Package Manager', function() {
           git: [
             'https://gitlab.com/bcoin-org/bdb.git'
           ],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null
         }
       },
       {
@@ -115,7 +117,8 @@ describe('Git Package Manager', function() {
             'ssh://git@xg5jwb4xxwajkhur2ahuhtdwifniyoyvbm5h4yzawawwjziol3jq.onion:22/bcoin/bcoin.git',
             'ssh://git@23aj5gsggiufl6qhfbmzwd334qyhgaugbh2g3ty4ecl3jikmt5ja.onion:22/bcoin/bcoin.git',
           ],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null
         }
       },
       {
@@ -127,7 +130,8 @@ describe('Git Package Manager', function() {
           git: [
             `${datadir}/repo/.git`
           ],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null
         }
       },
       {
@@ -139,18 +143,100 @@ describe('Git Package Manager', function() {
           git: [
             `${datadir}/repo/.git`
           ],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null
         }
       }
     ];
 
     for (const {input, output} of vectors) {
-      const src = expandSrc(datadir, remotes, input.name, input.src);
-      assert.deepEqual(src, output);
+      it(`${input.src}`, () => {
+        const src = expandSrc(datadir, remotes, input.name, input.src);
+        assert.deepEqual(src, output);
+      });
     }
   });
 
-  it('should parse legacy package', () => {
+  describe('should parse verbose source', () => {
+    const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
+    const vectors = [
+      {
+        input: {
+          name: 'bcoin',
+          src: 'git+https://github.com/bcoin-org/bcfg.git#semver:~2.0.0'
+        },
+        output: {
+          git: ['https://github.com/bcoin-org/bcfg.git'],
+          version: '~2.0.0',
+          branch: null
+        }
+      },
+      {
+        input: {
+          name: 'bcoin',
+          src: 'git+ssh://git@github.com/bcoin-org/bcoin.git#semver:~2.0.0'
+        },
+        output: {
+          git: ['ssh://git@github.com/bcoin-org/bcoin.git'],
+          version: '~2.0.0',
+          branch: null
+        }
+      },
+      {
+        input: {
+          name: 'bcoin',
+          src: 'git+https://github.com/bcoin-org/bcfg.git#v2.0.0'
+        },
+        output: {
+          git: ['https://github.com/bcoin-org/bcfg.git'],
+          version: null,
+          branch: 'v2.0.0'
+        }
+      },
+      {
+        input: {
+          name: 'bcoin',
+          src: `git+ssh://git@github.com/bcoin-org/bcoin.git#${hash}`
+        },
+        output: {
+          git: ['ssh://git@github.com/bcoin-org/bcoin.git'],
+          version: null,
+          branch: `${hash}`
+        }
+      },
+      {
+        input: {
+          name: 'bcoin',
+          src: 'git://github.com/bcoin-org/bcoin.git'
+        },
+        output: {
+          git: ['git://github.com/bcoin-org/bcoin.git'],
+          version: null,
+          branch: null
+        }
+      },
+      {
+        input: {
+          name: 'bcoin',
+          src: 'git://github.com/bcoin-org/bcoin.git#semver:~2.0.0'
+        },
+        output: {
+          git: ['git://github.com/bcoin-org/bcoin.git'],
+          version: '~2.0.0',
+          branch: null
+        }
+      }
+    ];
+
+    for (const {input, output} of vectors) {
+      it(`${input.src}`, () => {
+        const src = expandSrc(datadir, remotes, input.name, input.src);
+        assert.deepEqual(src, output);
+      });
+    }
+  });
+
+  describe('should parse legacy package', () => {
     const vectors = [
       {
         input: {
@@ -159,7 +245,8 @@ describe('Git Package Manager', function() {
         },
         output: {
           git: [],
-          version: '~1.1.7'
+          version: '~1.1.7',
+          branch: null
         }
       }
     ];
@@ -167,8 +254,10 @@ describe('Git Package Manager', function() {
     const remotes = undefined;
 
     for (const {input, output} of vectors) {
-      const src = expandSrc(datadir, remotes, input.name, input.src);
-      assert.deepEqual(src, output);
+      it(`${input.src}`, () => {
+        const src = expandSrc(datadir, remotes, input.name, input.src);
+        assert.deepEqual(src, output);
+      });
     }
   });
 
