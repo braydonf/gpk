@@ -79,11 +79,12 @@ describe('Git Package Manager', function() {
   };
 
   describe('should parse multiple remote source', () => {
+    const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
     const vectors = [
       {
         input: {
           name: 'bdb',
-          src: 'github:bcoin-org/bdb@~1.1.7',
+          src: 'github:bcoin-org/bdb#semver:~1.1.7',
         },
         output: {
           git: [
@@ -96,7 +97,33 @@ describe('Git Package Manager', function() {
       {
         input: {
           name: 'bdb',
-          src: 'gitlab:bcoin-org/bdb@~1.1.7',
+          src: 'github:bcoin-org/bdb#v1.1.7',
+        },
+        output: {
+          git: [
+            'https://github.com/bcoin-org/bdb.git'
+          ],
+          version: null,
+          branch: 'v1.1.7',
+        }
+      },
+      {
+        input: {
+          name: 'bdb',
+          src: `github:bcoin-org/bdb#${hash}`,
+        },
+        output: {
+          git: [
+            'https://github.com/bcoin-org/bdb.git'
+          ],
+          version: null,
+          branch: `${hash}`,
+        }
+      },
+      {
+        input: {
+          name: 'bdb',
+          src: 'gitlab:bcoin-org/bdb#semver:~1.1.7',
         },
         output: {
           git: [
@@ -109,7 +136,7 @@ describe('Git Package Manager', function() {
       {
         input: {
           name: 'bcoin',
-          src: 'onion:bcoin/bcoin@~1.1.7'
+          src: 'onion:bcoin/bcoin#semver:~1.1.7'
         },
         output: {
           git: [
@@ -124,7 +151,7 @@ describe('Git Package Manager', function() {
       {
         input: {
           name: 'repo',
-          src: 'local:repo@~1.1.7'
+          src: 'local:repo#semver:~1.1.7'
         },
         output: {
           git: [
@@ -137,7 +164,7 @@ describe('Git Package Manager', function() {
       {
         input: {
           name: 'repo',
-          src: 'local:@~1.1.7'
+          src: 'local:#semver:~1.1.7'
         },
         output: {
           git: [
@@ -431,9 +458,9 @@ describe('Git Package Manager', function() {
         local: ['file:../'],
       },
       dependencies: {
-        bar: 'local:bar@^1.0.0',
-        beep: 'local:beep@^1.0.0',
-        bloop: 'local:bloop@^1.0.0'
+        bar: 'local:bar#semver:^1.0.0',
+        beep: 'local:beep#semver:^1.0.0',
+        bloop: 'local:bloop#semver:^1.0.0'
       }
     });
   });
