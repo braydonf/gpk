@@ -408,12 +408,13 @@ describe('Git Package Manager', function() {
 
   it('should compute a sha512 tree of git tree', async () => {
     const git = `${datadir}/repo/.git`;
+    const base = `${datadir}/repo`;
 
     let err = null;
     let digest = null;
 
     try {
-      digest = await treeHash(git, 'sha512');
+      digest = await treeHash(git, base, 'sha512');
     } catch (e) {
       err = e;
     }
@@ -421,8 +422,8 @@ describe('Git Package Manager', function() {
     assert(!err);
     assert(digest);
 
-    const expected = '5wtrttD9yjVEQgmQY4mXWTzIpN5dLh6peY2gAIvu8dpv'
-          + '6NMlo+E1Bf9acr5gjNtuUQtuOkaopWeOzpeNm8VU1Q==';
+    const expected = 'RA5uffYjMoSmx4FmrDpXQUyg3CApDAMCHsFBuANirGx3'
+          + 'fCBz4wN1XQZEzRj6/s20b/gNhAMZVg9f8opnMx//OQ==';
 
     assert(digest);
     assert.equal(digest.toString('base64'), expected);
