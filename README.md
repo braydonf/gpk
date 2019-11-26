@@ -1,4 +1,4 @@
-# Git Package Manager
+# gpk
 
 Decentralized and secure package management for JavaScript and Node.js
 libraries and applications.

@@ -32,7 +32,7 @@ const {
   locatePkg,
   rebuild,
   install
-} = require('../lib/gpm');
+} = require('../lib/gpk');
 
 const {
   listTags,
@@ -49,11 +49,11 @@ describe('Git Package Manager', function() {
   const datadir = resolve(__dirname, './data');
 
   function testdir(name) {
-    return `${tmpdir()}/gpm-test-${name}-${randomBytes(4).toString('hex')}`;
+    return `${tmpdir()}/gpk-test-${name}-${randomBytes(4).toString('hex')}`;
   }
 
   function testfile(name) {
-    return `${tmpdir()}/gpm-test-${randomBytes(4).toString('hex')}-${name}`;
+    return `${tmpdir()}/gpk-test-${randomBytes(4).toString('hex')}-${name}`;
   }
 
   async function unpack(tar, dst) {

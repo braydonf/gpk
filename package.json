@@ -1,22 +1,22 @@
 {
-  "name": "gpm",
+  "name": "gpk",
   "version": "1.0.0",
-  "description": "Git Package Manager",
-  "main": "./lib/gpm.js",
+  "description": "Decentralized and secure package management.",
+  "main": "./lib/gpk.js",
   "bin": {
-    "gpm": "./bin/gpm"
+    "gpk": "./bin/gpk"
   },
   "scripts": {
     "test": "./vendor/bmocha/bin/bmocha --reporter spec test/**/*-test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/braydonf/gpm.git"
+    "url": "git+https://github.com/braydonf/gpk.git"
   },
   "author": "Braydon Fuller",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/braydonf/gpm/issues"
+    "url": "https://github.com/braydonf/gpk/issues"
   },
-  "homepage": "https://github.com/braydonf/gpm#readme"
+  "homepage": "https://github.com/braydonf/gpk#readme"
 }

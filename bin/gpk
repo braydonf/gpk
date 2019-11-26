@@ -2,9 +2,9 @@
 
 'use strict';
 
-process.title = 'gpm';
+process.title = 'gpk';
 
-const {install} = require('../lib/gpm');
+const {install} = require('../lib/gpk');
 const {processArgs} = require('../lib/cli');
 
 const config = {
