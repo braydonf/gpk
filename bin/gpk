@@ -4,19 +4,31 @@
 
 process.title = 'gpk';
 
-const {install, test} = require('../lib/gpk');
+const {install, run} = require('../lib/gpk');
 const {processArgs} = require('../lib/cli');
 
-const config = {
-  'production': {
-    value: false,
-    valid: a => (a === true || a === false),
-    fallback: false
+const cmds = {
+  install:  {
+    args: {'min': 0, 'max': Infinity},
+    params: {
+      production: {
+        value: false,
+        valid: a => (a === true || a === false),
+        fallback: false
+      }
+    }
+  },
+  test: {
+    args: {'min': 0, 'max': 0},
+    params: {}
+  },
+  run: {
+    args: {'min': 1, 'max': 1},
+    params: {}
   }
 };
 
-const cmds = ['install', 'test'];
-const {cmd, settings} = processArgs(process.argv, config, cmds);
+const {cmd, args, params} = processArgs(process.argv, cmds);
 
 (async () => {
   const cwd = process.cwd();
@@ -27,7 +39,10 @@ const {cmd, settings} = processArgs(process.argv, config, cmds);
       await install(cwd);
       break;
     case 'test':
-      code = await test(cwd);
+      code = await run(cwd, 'test');
+      break;
+    case 'run':
+      code = await run(cwd, args[0]);
       break;
     default:
       console.log('Unrecognized command.');
