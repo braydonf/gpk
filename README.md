@@ -1,7 +1,7 @@
-# gpk — A decentralized JavaScript package manager
+# gpk
 
-Git based, decentralized and secure package management for JavaScript and Node.js (C/C++)
-libraries and applications.
+Git based, decentralized and secure package management for JavaScript and Node.js
+addons (C/C++), libraries and applications.
 
 ## Features
 
@@ -11,6 +11,7 @@ libraries and applications.
 - Package integrity using strong hash algorithms (e.g. `sha512`).
 - Resolves shared dependencies based on semantic versioning via Git
   tags (e.g. `v1.1.0`).
+- Node.js C/C++ addon build support.
 
 ## Usage
 
@@ -30,3 +31,7 @@ Here is how to specify dependencies in `package.json`:
 The signature of the matching Git tag or commit is verified for each
 dependency. The dependencies must be from a Git repository. The referenced
 Git tag or commit must be signed and the necessary public keys imported.
+
+Note: The format of `package.json` dependencies is compatible with other
+package managers such as `npm` and `yarn`, however they lack support
+for signature verification.
