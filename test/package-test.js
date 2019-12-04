@@ -22,7 +22,12 @@ const fs = require('fs');
 const mkdir = util.promisify(fs.mkdir);
 
 const Package = require('../lib/package');
-const {datadir, testdir, unpack} = require('./common');
+const {datadir, testdir, testfile, unpack} = require('./common');
+
+const stdin = process.stdin;
+const stdout = fs.createWriteStream(`${testfile('stdout')}`);
+const stderr = fs.createWriteStream(`${testfile('stderr')}`);
+const stdio = [stdin, stdout, stderr];
 
 describe('Package', function() {
   describe('resolveRemote()', function() {
@@ -220,13 +225,16 @@ describe('Package', function() {
 
     for (const {input, output} of vectors) {
       it(`${input.src}`, () => {
-        const mod = new Package({
+        const mod = new Package(
           datadir,
-          info: {
+          {
             remotes: remotes,
             dependencies: {}
+          },
+          {
+            stdio
           }
-        });
+        );
 
         mod.info.dependencies[input.name] = input.src;
 
@@ -240,7 +248,8 @@ describe('Package', function() {
     it('should locate and read package.json', async () => {
       let err = null;
 
-      const mod = await Package.fromDirectory(`${datadir}/modules/foo/lib`);
+      const moddir = `${datadir}/modules/foo/lib`;
+      const mod = await Package.fromDirectory(moddir, true, {stdio});
 
       assert.equal(mod.dir, `${datadir}/modules/foo`);
       assert.deepEqual(mod.info, {
@@ -267,7 +276,8 @@ describe('Package', function() {
       await unpack(`${datadir}/modules.tar.gz`, modules);
 
       // Install the dependencies of foo module.
-      const mod = await Package.fromDirectory(`${modules}/modules/foo`);
+      const moddir = `${modules}/modules/foo`;
+      const mod = await Package.fromDirectory(moddir, false, {stdio});
       await mod.install();
     });
   });
