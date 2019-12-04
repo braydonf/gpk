@@ -7,36 +7,50 @@ process.title = 'gpk';
 const Package = require('../lib/package');
 const {processArgs} = require('../lib/cli');
 
+// Define shared parameters.
+const production = {
+  value: false,
+  valid: a => (a === true || a === false),
+  fallback: false
+};
+
+// Define commands and supported
+// arguments and parameters.
 const cmds = {
   install:  {
-    args: {'min': 0, 'max': Infinity},
-    params: {
-      production: {
-        value: false,
-        valid: a => (a === true || a === false),
-        fallback: false
-      }
-    }
+    args: {min: 0, max: 1024},
+    params: {production}
+  },
+  rebuild: {
+    args: {min: 0, max: 1024},
+    params: {}
   },
   test: {
-    args: {'min': 0, 'max': 0},
+    args: {min: 0, max: 0},
     params: {}
   },
   run: {
-    args: {'min': 1, 'max': 1},
+    args: {min: 1, max: 1},
     params: {}
   }
 };
 
+// Define command aliases.
+cmds.build = cmds.rebuild;
+
 const {cmd, args, params} = processArgs(process.argv, cmds);
 
 (async () => {
-  const pkg = await Package.fromDirectory(process.cwd());
+  const pkg = await Package.fromDirectory(process.cwd(), true);
   let code = 0;
 
   switch (cmd) {
     case 'install':
       await pkg.install();
+      break;
+    case 'build':
+    case 'rebuild':
+      await pkg.rebuild();
       break;
     case 'test':
       code = await pkg.run('test');
