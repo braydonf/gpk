@@ -5,7 +5,7 @@
 process.title = 'gpk';
 
 const Package = require('../lib/package');
-const {processArgs} = require('../lib/cli');
+const {processArgs, printHelp} = require('../lib/cli');
 
 // Define shared parameters.
 const production = {
@@ -32,11 +32,19 @@ const cmds = {
   run: {
     args: {min: 1, max: 1},
     params: {}
+  },
+  help: {
+    args: {min: 0, max: 0},
+    params: {}
   }
 };
 
 // Define command aliases.
 cmds.build = cmds.rebuild;
+cmds.rb = cmds.rebuild;
+cmds.i = cmds.install;
+cmds.t = cmds.test;
+cmds.tst = cmds.test;
 
 const {cmd, args, params} = processArgs(process.argv, cmds);
 
@@ -45,21 +53,26 @@ const {cmd, args, params} = processArgs(process.argv, cmds);
   let code = 0;
 
   switch (cmd) {
+    case 'i':
     case 'install':
       await pkg.install();
       break;
+    case 'rb':
     case 'build':
     case 'rebuild':
       await pkg.rebuild();
       break;
+    case 't':
+    case 'tst':
     case 'test':
       code = await pkg.run('test');
       break;
     case 'run':
       code = await pkg.run(args[0]);
       break;
+    case 'help':
     default:
-      console.log('Unrecognized command.');
+      printHelp(cmds);
   }
 
   process.exit(code);
