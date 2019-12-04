@@ -1,6 +1,6 @@
-# gpk
+# gpk — A decentralized JavaScript package manager
 
-Decentralized and secure package management for JavaScript and Node.js
+Git based, decentralized and secure package management for JavaScript and Node.js (C/C++)
 libraries and applications.
 
 ## Features
