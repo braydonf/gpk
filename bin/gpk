@@ -4,7 +4,7 @@
 
 process.title = 'gpk';
 
-const {install, run} = require('../lib/gpk');
+const Package = require('../lib/package');
 const {processArgs} = require('../lib/cli');
 
 const cmds = {
@@ -31,18 +31,18 @@ const cmds = {
 const {cmd, args, params} = processArgs(process.argv, cmds);
 
 (async () => {
-  const cwd = process.cwd();
+  const pkg = await Package.fromDirectory(process.cwd());
   let code = 0;
 
   switch (cmd) {
     case 'install':
-      await install(cwd);
+      await pkg.install();
       break;
     case 'test':
-      code = await run(cwd, 'test');
+      code = await pkg.run('test');
       break;
     case 'run':
-      code = await run(cwd, args[0]);
+      code = await pkg.run(args[0]);
       break;
     default:
       console.log('Unrecognized command.');

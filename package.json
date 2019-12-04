@@ -2,7 +2,7 @@
   "name": "gpk",
   "version": "1.0.0",
   "description": "Decentralized and secure package management.",
-  "main": "./lib/gpk.js",
+  "main": "./lib/package.js",
   "bin": {
     "gpk": "./bin/gpk"
   },
