@@ -177,8 +177,8 @@ describe('Git', function() {
       assert(!err);
       assert(digest);
 
-      const expected = 'RA5uffYjMoSmx4FmrDpXQUyg3CApDAMCHsFBuANirGx3'
-            + 'fCBz4wN1XQZEzRj6/s20b/gNhAMZVg9f8opnMx//OQ==';
+      const expected = 'HAFoBqk0L6u9GPuBJL5tkynyBLiKO8QYCGNpkk0Nfysq' +
+            'Wlk7MkMmd8GBHWQJVBOVGhdTEsBK7HnCrfdTI5Pmbg==';
 
       assert(digest);
       assert.equal(digest.toString('base64'), expected);
