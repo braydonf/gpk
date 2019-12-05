@@ -268,7 +268,7 @@ describe('Package', function() {
     });
   });
 
-  describe('install()', function() {
+  describe('install()/rebuild()', function() {
     it('should install dependencies', async () => {
       // Setup the test modules.
       const modules = testdir('install');
@@ -279,6 +279,7 @@ describe('Package', function() {
       const moddir = `${modules}/modules/foo`;
       const mod = await Package.fromDirectory(moddir, false, {stdio});
       await mod.install();
+      await mod.rebuild();
     });
   });
 });
