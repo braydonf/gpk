@@ -40,11 +40,12 @@ const cmds = {
 };
 
 // Define command aliases.
-cmds.build = cmds.rebuild;
-cmds.rb = cmds.rebuild;
-cmds.i = cmds.install;
-cmds.t = cmds.test;
-cmds.tst = cmds.test;
+cmds['build'] = cmds.rebuild;
+cmds['rb'] = cmds.rebuild;
+cmds['i'] = cmds.install;
+cmds['t'] = cmds.test;
+cmds['tst'] = cmds.test;
+cmds['--help'] = cmds.help;
 
 (async () => {
   const {cmd, args, params} = processArgs(process.argv, cmds);
@@ -70,6 +71,7 @@ cmds.tst = cmds.test;
     case 'run':
       code = await pkg.run(args[0]);
       break;
+    case '--help':
     case 'help':
     default:
       printHelp(cmds);
