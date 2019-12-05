@@ -78,6 +78,8 @@ const {cmd, args, params} = processArgs(process.argv, cmds);
 
   process.exit(code);
 })().catch((err) => {
-  console.error(err.stack);
+  process.stdout.write('gpk: \x1b[31m[error]\x1b[39m ');
+  process.stdout.write(err.message);
+  process.stdout.write('\n');
   process.exit(1);
 });
