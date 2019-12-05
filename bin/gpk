@@ -46,9 +46,8 @@ cmds.i = cmds.install;
 cmds.t = cmds.test;
 cmds.tst = cmds.test;
 
-const {cmd, args, params} = processArgs(process.argv, cmds);
-
 (async () => {
+  const {cmd, args, params} = processArgs(process.argv, cmds);
   const pkg = await Package.fromDirectory(process.cwd(), true);
   let code = 0;
 
