@@ -5,6 +5,7 @@
 process.title = 'gpk';
 
 const Package = require('../lib/package');
+const Environment = require('../lib/environment');
 const {processArgs, printHelp} = require('../lib/cli');
 
 // Define shared parameters.
@@ -47,9 +48,11 @@ cmds['t'] = cmds.test;
 cmds['tst'] = cmds.test;
 cmds['--help'] = cmds.help;
 
+const env = new Environment();
+
 (async () => {
   const {cmd, args, params} = processArgs(process.argv, cmds);
-  const pkg = await Package.fromDirectory(process.cwd(), true);
+  const pkg = await Package.fromDirectory(process.cwd(), true, env);
   let code = 0;
 
   switch (cmd) {
@@ -79,8 +82,6 @@ cmds['--help'] = cmds.help;
 
   process.exit(code);
 })().catch((err) => {
-  process.stdout.write('gpk: \x1b[31m[error]\x1b[39m ');
-  process.stdout.write(err.message);
-  process.stdout.write('\n');
+  env.error(err.message);
   process.exit(1);
 });

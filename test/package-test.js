@@ -21,15 +21,15 @@ const util = require('util');
 const fs = require('fs');
 const mkdir = util.promisify(fs.mkdir);
 
+const Environment = require('../lib/environment');
 const Package = require('../lib/package');
 const {datadir, testdir, testfile, unpack} = require('./common');
 
-const stdin = process.stdin;
-const stdout = fs.createWriteStream(`${testfile('stdout')}`);
-const stderr = fs.createWriteStream(`${testfile('stderr')}`);
-const stdio = [stdin, stdout, stderr];
-
 describe('Package', function() {
+  const stdout = fs.createWriteStream(`${testfile('stdout')}`);
+  const stderr = fs.createWriteStream(`${testfile('stderr')}`);
+  const env = new Environment([process.stdin, stdout, stderr]);
+
   describe('resolveRemote()', function() {
     const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
 
@@ -231,9 +231,7 @@ describe('Package', function() {
             remotes: remotes,
             dependencies: {}
           },
-          {
-            stdio
-          }
+          env
         );
 
         mod.info.dependencies[input.name] = input.src;
@@ -249,7 +247,7 @@ describe('Package', function() {
       let err = null;
 
       const moddir = `${datadir}/modules/foo/lib`;
-      const mod = await Package.fromDirectory(moddir, true, {stdio});
+      const mod = await Package.fromDirectory(moddir, true, env);
 
       assert.equal(mod.dir, `${datadir}/modules/foo`);
       assert.deepEqual(mod.info, {
@@ -277,7 +275,7 @@ describe('Package', function() {
 
       // Install the dependencies of foo module.
       const moddir = `${modules}/modules/foo`;
-      const mod = await Package.fromDirectory(moddir, false, {stdio});
+      const mod = await Package.fromDirectory(moddir, false, env);
       await mod.install();
       await mod.rebuild();
     });
