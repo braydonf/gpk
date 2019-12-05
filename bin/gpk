@@ -51,6 +51,7 @@ cmds['--help'] = cmds.help;
 const env = new Environment();
 
 (async () => {
+  await env.ensure();
   const {cmd, args, params} = processArgs(process.argv, cmds);
   const pkg = await Package.fromDirectory(process.cwd(), true, env);
   let code = 0;

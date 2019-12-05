@@ -28,7 +28,9 @@ const {datadir, testdir, testfile, unpack} = require('./common');
 describe('Package', function() {
   const stdout = fs.createWriteStream(`${testfile('stdout')}`);
   const stderr = fs.createWriteStream(`${testfile('stderr')}`);
-  const env = new Environment([process.stdin, stdout, stderr]);
+  const global = testdir('global');
+  const home = testdir('home');
+  const env = new Environment([process.stdin, stdout, stderr], home, global);
 
   describe('resolveRemote()', function() {
     const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
