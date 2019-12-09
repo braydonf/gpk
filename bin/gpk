@@ -8,19 +8,24 @@ const Package = require('../lib/package');
 const Environment = require('../lib/environment');
 const {processArgs, printHelp} = require('../lib/cli');
 
-// Define shared parameters.
-const production = {
-  value: false,
-  valid: a => (a === true || a === false),
-  fallback: false
-};
-
-// Define commands and supported
-// arguments and parameters.
+// Define commands and supported arguments
+// and parameters.
 const cmds = {
   install:  {
     args: {min: 0, max: 1024},
-    params: {production}
+    params: {
+      production: {
+        value: false,
+        valid: a => (a === true || a === false),
+        fallback: false
+      },
+      global: {
+        value: false,
+        valid: a => (a === true || a === false),
+        fallback: false,
+        alias: 'g'
+      }
+    }
   },
   rebuild: {
     args: {min: 0, max: 1024},
