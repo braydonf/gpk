@@ -6,7 +6,7 @@ process.title = 'gpk';
 
 const Package = require('../lib/package');
 const Environment = require('../lib/environment');
-const {processArgs, printHelp, runCmd} = require('../lib/cli');
+const CLI = require('../lib/cli');
 
 const env = new Environment();
 
@@ -14,7 +14,7 @@ const env = new Environment();
   await env.ensure();
   const pkg = await Package.fromDirectory(process.cwd(), true, env);
 
-  const cmds = {
+  const cli = new CLI({
     install:  {
       args: {min: 0, max: 1024},
       params: {
@@ -67,15 +67,25 @@ const env = new Environment();
       args: {min: 0, max: 0},
       params: {},
       aliases: ['--help'],
-      fn: async () => {
-        printHelp(cmds);
+      fn: async (args, params) => {
+        const {stdout} = process;
+
+        const pkg = require('../package.json');
+        const which = path.resolve(__dirname, '../');
+        const commandNames = Object.keys(cli.cmds).sort();
+
+        stdout.write('\n');
+        stdout.write(`Usage: ${pkg.name} <command>\n\n`);
+        stdout.write('where <command> is one of:\n');
+        stdout.write(`    ${commandNames.join(', ')}`);
+        stdout.write('\n\n');
+        stdout.write(`${pkg.name}@${pkg.version} ${which}\n`);
         return 0;
       }
     }
-  };
+  });
 
-  const {cmd, args, params} = processArgs(process.argv, cmds);
-  const code = await runCmd(cmds, cmd, args, params);
+  const code = await cli.run(process.argv);
   process.exit(code);
 })().catch((err) => {
   env.error(err.stack);
