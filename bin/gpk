@@ -6,84 +6,78 @@ process.title = 'gpk';
 
 const Package = require('../lib/package');
 const Environment = require('../lib/environment');
-const {processArgs, printHelp} = require('../lib/cli');
-
-// Define commands and supported arguments
-// and parameters.
-const cmds = {
-  install:  {
-    args: {min: 0, max: 1024},
-    params: {
-      production: {
-        value: false,
-        valid: a => (a === true || a === false),
-        fallback: false
-      },
-      global: {
-        value: false,
-        valid: a => (a === true || a === false),
-        fallback: false,
-        aliases: ['g']
-      }
-    },
-    aliases: ['i']
-  },
-  rebuild: {
-    args: {min: 0, max: 1024},
-    params: {},
-    aliases: ['build', 'rb'],
-  },
-  test: {
-    args: {min: 0, max: 0},
-    params: {},
-    aliases: ['t', 'tst']
-  },
-  run: {
-    args: {min: 1, max: 1},
-    params: {}
-  },
-  help: {
-    args: {min: 0, max: 0},
-    params: {},
-    aliases: ['--help']
-  }
-};
+const {processArgs, printHelp, runCmd} = require('../lib/cli');
 
 const env = new Environment();
 
 (async () => {
   await env.ensure();
-  const {cmd, args, params} = processArgs(process.argv, cmds);
   const pkg = await Package.fromDirectory(process.cwd(), true, env);
-  let code = 0;
 
-  switch (cmd) {
-    case 'i':
-    case 'install':
-      await pkg.install();
-      await pkg.rebuild();
-      break;
-    case 'rb':
-    case 'build':
-    case 'rebuild':
-      await pkg.rebuild();
-      break;
-    case 't':
-    case 'tst':
-    case 'test':
-      code = await pkg.run('test');
-      break;
-    case 'run':
-      code = await pkg.run(args[0]);
-      break;
-    case '--help':
-    case 'help':
-    default:
-      printHelp(cmds);
-  }
+  const cmds = {
+    install:  {
+      args: {min: 0, max: 1024},
+      params: {
+        production: {
+          value: false,
+          valid: a => (a === true || a === false),
+          fallback: false
+        },
+        global: {
+          value: false,
+          valid: a => (a === true || a === false),
+          fallback: false,
+          aliases: ['g']
+        }
+      },
+      aliases: ['i'],
+      fn: async (args, params) => {
+        await pkg.install();
+        await pkg.rebuild();
+        return 0;
+      }
+    },
+    rebuild: {
+      args: {min: 0, max: 1024},
+      params: {},
+      aliases: ['build', 'rb'],
+      fn: async (args, params) => {
+        await pkg.rebuild();
+        return 0;
+      }
+    },
+    test: {
+      args: {min: 0, max: 0},
+      params: {},
+      aliases: ['t', 'tst'],
+      fn: async (args, params) => {
+        code = await pkg.run('test');
+        return code;
+      }
+    },
+    run: {
+      args: {min: 1, max: 1},
+      params: {},
+      fn: async (args, params) => {
+        code = await pkg.run(args[0]);
+        return code;
+      }
+    },
+    help: {
+      args: {min: 0, max: 0},
+      params: {},
+      aliases: ['--help'],
+      fn: async () => {
+        printHelp(cmds);
+        return 0;
+      }
+    }
+  };
 
+  const {cmd, args, params} = processArgs(process.argv, cmds);
+  const code = await runCmd(cmds, cmd, args, params);
   process.exit(code);
 })().catch((err) => {
-  env.error(err.message);
+  env.error(err.stack);
   process.exit(1);
 });
