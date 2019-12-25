@@ -9,6 +9,7 @@ Node.js libraries and applications.
   via any Git repository.
 - Signature verification via signed Git tags.
 - Package integrity using strong hash algorithms (e.g. `sha512`).
+- Deterministic installation of packages.
 - Resolves shared dependencies based on semantic versioning via Git
   tags (e.g. `v1.1.0`).
 - Node.js C/C++ addon build support.
