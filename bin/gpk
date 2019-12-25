@@ -36,6 +36,7 @@ const env = new Environment();
       fn: async (args, params) => {
         await pkg.install();
         await pkg.rebuild();
+        await pkg.linkBin();
         return 0;
       }
     },
