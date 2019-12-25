@@ -34,9 +34,23 @@ const env = new Environment();
       },
       aliases: ['i'],
       fn: async (args, params) => {
-        await pkg.install();
+        // Install all dependencies.
+        await pkg.install(null, {
+          production: params.production
+        });
+
+        // Build any native addons.
         await pkg.rebuild();
-        await pkg.linkBin();
+
+        // Link library to global path.
+        if (params.global)
+          await pkg.linkGlobal();
+
+        // Link any executables.
+        await pkg.linkBin(null, {
+          global: params.global
+        });
+
         return 0;
       }
     },
