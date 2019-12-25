@@ -14,6 +14,20 @@ Node.js libraries and applications.
   tags (e.g. `v1.1.0`).
 - Node.js C/C++ addon build support.
 
+## Install
+
+Clone and verify:
+```
+git clone https://github.com/braydonf/gpk
+cd gpk
+git verify-commit HEAD
+```
+
+Install globally:
+```
+./bin/gpk install -g
+```
+
 ## Usage
 
 Here is how to specify dependencies in `package.json`:
