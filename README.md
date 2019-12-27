@@ -8,11 +8,9 @@ Node.js libraries and applications.
 - Packages are decentralized via Git and can be hosted and published
   via any Git repository.
 - Signature verification via signed Git tags.
-- Package integrity using strong hash algorithms (e.g. `sha512`).
 - Deterministic installation of packages.
 - Resolves shared dependencies based on semantic versioning via Git
   tags (e.g. `v1.1.0`).
-- Node.js C/C++ addon build support.
 
 ## Install
 
@@ -29,6 +27,17 @@ Install globally:
 ```
 
 ## Usage
+
+### Command examples
+
+- `gpk install` - Install dependencies and verify signatures.
+- `gpk test` - Run package tests.
+- `gpk run <script>` Run package defined script.
+- `gpk install -g` Link a module globally.
+- `gpk rebuild` - Build native addons.
+- `gpk help` - Display all available commands.
+
+### Specifying dependencies
 
 Here is how to specify dependencies in `package.json`:
 
@@ -47,6 +56,9 @@ The signature of the matching Git tag or commit is verified for each
 dependency. The dependencies must be from a Git repository. The referenced
 Git tag or commit must be signed and the necessary public keys imported.
 
-Note: The format of `package.json` dependencies is compatible with other
-package managers such as `npm` and `yarn`, however they lack support
-for signature verification.
+## Additional features
+
+- Node.js C/C++ addon build support.
+- Exclude files from a package with `.gpkignore` similar to
+  `.gitignore`, `.npmignore` and `.yarnignore`.
+- Compatible with the `npm` command line interface.
