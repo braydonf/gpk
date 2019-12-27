@@ -8,7 +8,14 @@ Node.js libraries and applications.
 - Packages are decentralized via Git and can be hosted and published
   via any Git repository.
 - Signature verification via signed Git tags.
-- Deterministic installation of packages.
+- Deterministic installation of packages to support commiting and
+  bundling dependencies with Git.
+- Resolves shared dependencies based on semantic versioning via Git
+  tags (e.g. `v1.1.0`).
+- Node.js C/C++ addon build support with `node-gyp`.
+- Exclude files from a package with `.npmignore` similar to
+  `.gitignore` and remains compatible with `npm`.
+- Compatible with the `npm` command line interface.
 
 ## Install
 
@@ -53,12 +60,3 @@ Here is how to specify dependencies in `package.json`:
 The signature of the matching Git tag or commit is verified for each
 dependency. The dependencies must be from a Git repository. The referenced
 Git tag or commit must be signed and the necessary public keys imported.
-
-## Additional features
-
-- Resolves shared dependencies based on semantic versioning via Git
-  tags (e.g. `v1.1.0`).
-- Node.js C/C++ addon build support.
-- Exclude files from a package with `.npmignore` similar to
-  `.gitignore` and remains compatible with `npm`.
-- Compatible with the `npm` command line interface.
