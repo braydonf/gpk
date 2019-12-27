@@ -36,20 +36,10 @@ describe('Package', function() {
     const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
 
     const remotes = {
-      local: [
-        `file:${datadir}`
-      ],
-      onion: [
-        'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22',
-        'ssh://git@xg5jwb4xxwajkhur2ahuhtdwifniyoyvbm5h4yzawawwjziol3jq.onion:22',
-        'ssh://git@23aj5gsggiufl6qhfbmzwd334qyhgaugbh2g3ty4ecl3jikmt5ja.onion:22',
-      ],
-      gitlab: [
-        'https://gitlab.com'
-      ],
-      github: [
-        'https://github.com',
-      ]
+      local: `file:${datadir}`,
+      onion: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22',
+      gitlab: 'https://gitlab.com',
+      github: 'https://github.com'
     };
 
     const vectors = [
@@ -59,9 +49,7 @@ describe('Package', function() {
           src: 'github:bcoin-org/bdb#semver:~1.1.7',
         },
         output: {
-          git: [
-            'https://github.com/bcoin-org/bdb.git'
-          ],
+          git: 'https://github.com/bcoin-org/bdb.git',
           version: '~1.1.7',
           branch: null,
         }
@@ -72,9 +60,7 @@ describe('Package', function() {
           src: 'github:bcoin-org/bdb#v1.1.7',
         },
         output: {
-          git: [
-            'https://github.com/bcoin-org/bdb.git'
-          ],
+          git: 'https://github.com/bcoin-org/bdb.git',
           version: null,
           branch: 'v1.1.7',
         }
@@ -85,9 +71,7 @@ describe('Package', function() {
           src: `github:bcoin-org/bdb#${hash}`,
         },
         output: {
-          git: [
-            'https://github.com/bcoin-org/bdb.git'
-          ],
+          git: 'https://github.com/bcoin-org/bdb.git',
           version: null,
           branch: `${hash}`,
         }
@@ -98,9 +82,7 @@ describe('Package', function() {
           src: 'gitlab:bcoin-org/bdb#semver:~1.1.7',
         },
         output: {
-          git: [
-            'https://gitlab.com/bcoin-org/bdb.git'
-          ],
+          git: 'https://gitlab.com/bcoin-org/bdb.git',
           version: '~1.1.7',
           branch: null
         }
@@ -111,11 +93,7 @@ describe('Package', function() {
           src: 'onion:bcoin/bcoin#semver:~1.1.7'
         },
         output: {
-          git: [
-            'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22/bcoin/bcoin.git',
-            'ssh://git@xg5jwb4xxwajkhur2ahuhtdwifniyoyvbm5h4yzawawwjziol3jq.onion:22/bcoin/bcoin.git',
-            'ssh://git@23aj5gsggiufl6qhfbmzwd334qyhgaugbh2g3ty4ecl3jikmt5ja.onion:22/bcoin/bcoin.git',
-          ],
+          git: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22/bcoin/bcoin.git',
           version: '~1.1.7',
           branch: null
         }
@@ -126,9 +104,7 @@ describe('Package', function() {
           src: 'local:repo#semver:~1.1.7'
         },
         output: {
-          git: [
-            `${datadir}/repo/.git`
-          ],
+          git: `${datadir}/repo/.git`,
           version: '~1.1.7',
           branch: null
         }
@@ -139,9 +115,7 @@ describe('Package', function() {
           src: 'local:#semver:~1.1.7'
         },
         output: {
-          git: [
-            `${datadir}/repo/.git`
-          ],
+          git: `${datadir}/repo/.git`,
           version: '~1.1.7',
           branch: null
         }
@@ -152,7 +126,7 @@ describe('Package', function() {
           src: 'git+https://github.com/bcoin-org/bcfg.git#semver:~2.0.0'
         },
         output: {
-          git: ['https://github.com/bcoin-org/bcfg.git'],
+          git: 'https://github.com/bcoin-org/bcfg.git',
           version: '~2.0.0',
           branch: null
         }
@@ -163,7 +137,7 @@ describe('Package', function() {
           src: 'git+ssh://git@github.com/bcoin-org/bcoin.git#semver:~2.0.0'
         },
         output: {
-          git: ['ssh://git@github.com/bcoin-org/bcoin.git'],
+          git: 'ssh://git@github.com/bcoin-org/bcoin.git',
           version: '~2.0.0',
           branch: null
         }
@@ -174,7 +148,7 @@ describe('Package', function() {
           src: 'git+https://github.com/bcoin-org/bcfg.git#v2.0.0'
         },
         output: {
-          git: ['https://github.com/bcoin-org/bcfg.git'],
+          git: 'https://github.com/bcoin-org/bcfg.git',
           version: null,
           branch: 'v2.0.0'
         }
@@ -185,7 +159,7 @@ describe('Package', function() {
           src: `git+ssh://git@github.com/bcoin-org/bcoin.git#${hash}`
         },
         output: {
-          git: ['ssh://git@github.com/bcoin-org/bcoin.git'],
+          git: 'ssh://git@github.com/bcoin-org/bcoin.git',
           version: null,
           branch: `${hash}`
         }
@@ -196,7 +170,7 @@ describe('Package', function() {
           src: 'git://github.com/bcoin-org/bcoin.git'
         },
         output: {
-          git: ['git://github.com/bcoin-org/bcoin.git'],
+          git: 'git://github.com/bcoin-org/bcoin.git',
           version: null,
           branch: null
         }
@@ -207,7 +181,7 @@ describe('Package', function() {
           src: 'git://github.com/bcoin-org/bcoin.git#semver:~2.0.0'
         },
         output: {
-          git: ['git://github.com/bcoin-org/bcoin.git'],
+          git: 'git://github.com/bcoin-org/bcoin.git',
           version: '~2.0.0',
           branch: null
         }
@@ -218,7 +192,7 @@ describe('Package', function() {
           src: '~1.1.7'
         },
         output: {
-          git: [],
+          git: null,
           version: '~1.1.7',
           branch: null
         }
@@ -238,7 +212,7 @@ describe('Package', function() {
 
         mod.info.dependencies[input.name] = input.src;
 
-        const remote = mod.resolveRemote(input.name);
+        const remote = mod.resolveRemote(null, input.name, input.src);
         assert.deepEqual(remote, output);
       });
     }
@@ -257,7 +231,7 @@ describe('Package', function() {
         version: '1.0.0',
         main: './lib/index.js',
         remotes: {
-          local: ['file:../'],
+          local: 'file:../',
         },
         dependencies: {
           bar: 'local:bar#semver:^1.0.0',
