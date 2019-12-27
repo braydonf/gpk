@@ -9,8 +9,6 @@ Node.js libraries and applications.
   via any Git repository.
 - Signature verification via signed Git tags.
 - Deterministic installation of packages.
-- Resolves shared dependencies based on semantic versioning via Git
-  tags (e.g. `v1.1.0`).
 
 ## Install
 
@@ -30,12 +28,12 @@ Install globally:
 
 ### Command examples
 
-- `gpk install` - Install dependencies and verify signatures.
+- `gpk install` Install dependencies and verify signatures.
 - `gpk test` - Run package tests.
 - `gpk run <script>` Run package defined script.
 - `gpk install -g` Link a module globally.
-- `gpk rebuild` - Build native addons.
-- `gpk help` - Display all available commands.
+- `gpk rebuild` Build native addons.
+- `gpk help` Display all available commands.
 
 ### Specifying dependencies
 
@@ -58,7 +56,9 @@ Git tag or commit must be signed and the necessary public keys imported.
 
 ## Additional features
 
+- Resolves shared dependencies based on semantic versioning via Git
+  tags (e.g. `v1.1.0`).
 - Node.js C/C++ addon build support.
-- Exclude files from a package with `.gpkignore` similar to
-  `.gitignore`, `.npmignore` and `.yarnignore`.
+- Exclude files from a package with `.npmignore` similar to
+  `.gitignore` and remains compatible with `npm`.
 - Compatible with the `npm` command line interface.
