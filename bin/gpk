@@ -72,10 +72,11 @@ const env = new Environment();
       }
     },
     run: {
-      args: {min: 1, max: 1},
+      args: {min: 1, max: 1024},
       params: {},
       fn: async (args, params) => {
-        return pkg.run(args[0]);
+        const name = args.shift();
+        return pkg.run(name, args);
       }
     },
     help: {
