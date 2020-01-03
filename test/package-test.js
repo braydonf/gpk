@@ -212,7 +212,7 @@ describe('Package', function() {
 
         mod.info.dependencies[input.name] = input.src;
 
-        const remote = mod.resolveRemote(null, input.name, input.src);
+        const remote = mod.resolveRemote({name: input.name, src: input.src});
         assert.deepEqual(remote, output);
       });
     }
@@ -253,7 +253,6 @@ describe('Package', function() {
       const moddir = `${modules}/modules/foo`;
       const mod = await Package.fromDirectory(moddir, false, env);
       await mod.install();
-      await mod.rebuild();
     });
   });
 });

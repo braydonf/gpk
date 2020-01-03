@@ -42,18 +42,22 @@ describe('Git', function() {
       assert.deepEqual(tags, {
         'v1.0.0': {
           annotated: 'dff7f77c1a6f17cefec11342a6e410ab83c8488a',
-          commit: '35c9aaaffc27f295981e996a24a0cb9cd7a84ecb'
+          commit: '35c9aaaffc27f295981e996a24a0cb9cd7a84ecb',
+          name: 'v1.0.0'
         },
         'v1.1.0': {
           annotated: '94071e59398891cb2cfd183045237c2494923459',
-          commit: '36ea09f31e77f24a796722adfa51eb62dac043fa'
+          commit: '36ea09f31e77f24a796722adfa51eb62dac043fa',
+          name: 'v1.1.0'
         },
         'v2.0.0': {
           annotated: '0ab87dcfe1dc8c327b1d8b8e9fa78bb1839ea86f',
-          commit: '294acab444f9742a7c1d0de273b7a412e7809e52'
+          commit: '294acab444f9742a7c1d0de273b7a412e7809e52',
+          name: 'v2.0.0'
         },
         'v2.1.0': {
-          commit: '3d2115aa2e86d8c08ce1639d177757aa1ce85799'
+          commit: '3d2115aa2e86d8c08ce1639d177757aa1ce85799',
+          name: 'v2.1.0'
         }
       });
     });
