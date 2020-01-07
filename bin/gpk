@@ -16,6 +16,15 @@ const env = new Environment();
   await env.ensure();
   const pkg = await Package.fromDirectory(process.cwd(), true, env);
 
+  const params = {
+    global: {
+      value: false,
+      valid: a => (a === true || a === false),
+      fallback: false,
+      aliases: ['g']
+    }
+  };
+
   const cli = new CLI({
     install:  {
       args: {min: 0, max: 1024},
@@ -25,16 +34,21 @@ const env = new Environment();
           valid: a => (a === true || a === false),
           fallback: false
         },
-        global: {
-          value: false,
-          valid: a => (a === true || a === false),
-          fallback: false,
-          aliases: ['g']
-        }
+        global: params.global
       },
       aliases: ['i'],
       fn: async (args, params) => {
         return pkg.install(args, params);
+      }
+    },
+    uninstall: {
+      args: {min: 0, max: 1024},
+      params: {
+        global: params.global
+      },
+      aliases: ['un'],
+      fn: async (args, params) => {
+        return pkg.uninstall(args, params);
       }
     },
     rebuild: {
@@ -42,8 +56,7 @@ const env = new Environment();
       params: {},
       aliases: ['build', 'rb'],
       fn: async (args, params) => {
-        await pkg.rebuild();
-        return 0;
+        return pkg.rebuild();
       }
     },
     test: {
