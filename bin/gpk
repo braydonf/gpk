@@ -26,6 +26,13 @@ const env = new Environment();
   };
 
   const cli = new CLI({
+    init: {
+      args: {min: 0, max: 0},
+      params: {},
+      fn: async (args, params) => {
+        return pkg.init();
+      }
+    },
     install:  {
       args: {min: 0, max: 1024},
       params: {
