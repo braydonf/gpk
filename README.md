@@ -39,9 +39,9 @@ Install globally:
 - `gpk install https://<url>/<org>/<repo>` Install latest tag and add a dependency.
 - `gpk install https://<url>/<org>/<repo>#<branch>` Install from a specific branch.
 - `gpk install -g https://<url>/<org>/<repo>` Install a global module.
+- `gpk install -g` Link a module globally.
 - `gpk test` Run package tests.
 - `gpk run <script>` Run package defined script.
-- `gpk install -g` Link a module globally.
 - `gpk rebuild` Build native addons.
 - `gpk uninstall <name>` Uninstall and remove a dependency.
 - `gpk uninstall -g <name>` Uninstall a global module.
