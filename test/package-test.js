@@ -242,17 +242,25 @@ describe('Package', function() {
     });
   });
 
-  describe('install()/rebuild()', function() {
+  describe('install()', function() {
     it('should install dependencies', async () => {
-      // Setup the test modules.
       const modules = testdir('install');
       await mkdir(modules);
       await unpack(`${datadir}/modules.tar.gz`, modules);
 
-      // Install the dependencies of foo module.
       const moddir = `${modules}/modules/foo`;
-      const mod = await Package.fromDirectory(moddir, false, env);
-      await mod.install();
+      const pkg = await Package.fromDirectory(moddir, false, env);
+      await pkg.install();
+    });
+
+    it('should install unflat dependencies', async () => {
+      const modules = testdir('install-unflat');
+      await mkdir(modules);
+      await unpack(`${datadir}/unflat.tar.gz`, modules);
+
+      const moddir = `${modules}/unflat/a`;
+      const pkg = await Package.fromDirectory(moddir, false, env);
+      await pkg.install();
     });
   });
 });
