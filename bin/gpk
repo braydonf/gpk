@@ -14,7 +14,11 @@ const env = new Environment();
 
 (async () => {
   await env.ensure();
-  const pkg = await Package.fromDirectory(process.cwd(), true, env);
+  const pkg = await Package.fromDirectory({
+    dir: process.cwd(),
+    walk: true,
+    env: env
+  });
 
   const params = {
     global: {
@@ -30,7 +34,11 @@ const env = new Environment();
       args: {min: 0, max: 0},
       params: {},
       fn: async (args, params) => {
-        const npkg = await Package.fromDirectory(process.cwd(), false, env);
+        const npkg = await Package.fromDirectory({
+          dir: process.cwd(),
+          walk: false,
+          env: env
+        });
         return npkg.init();
       }
     },

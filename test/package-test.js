@@ -201,14 +201,14 @@ describe('Package', function() {
 
     for (const {input, output} of vectors) {
       it(`${input.src}`, () => {
-        const mod = new Package(
-          datadir,
-          {
+        const mod = new Package({
+          dir: datadir,
+          info: {
             remotes: remotes,
             dependencies: {}
           },
-          env
-        );
+          env: env
+        });
 
         mod.info.dependencies[input.name] = input.src;
 
@@ -223,7 +223,12 @@ describe('Package', function() {
       let err = null;
 
       const moddir = `${datadir}/modules/foo/lib`;
-      const mod = await Package.fromDirectory(moddir, true, env);
+      const mod = await Package.fromDirectory({
+        dir: moddir,
+        walk: true,
+        env: env,
+        parent: null
+      });
 
       assert.equal(mod.dir, `${datadir}/modules/foo`);
       assert.deepEqual(mod.info, {
@@ -249,7 +254,11 @@ describe('Package', function() {
       await unpack(`${datadir}/modules.tar.gz`, modules);
 
       const moddir = `${modules}/modules/foo`;
-      const pkg = await Package.fromDirectory(moddir, false, env);
+      const pkg = await Package.fromDirectory({
+        dir: moddir,
+        walk: false,
+        env: env
+      });
       await pkg.install();
     });
 
@@ -259,7 +268,11 @@ describe('Package', function() {
       await unpack(`${datadir}/unflat.tar.gz`, modules);
 
       const moddir = `${modules}/unflat/a`;
-      const pkg = await Package.fromDirectory(moddir, false, env);
+      const pkg = await Package.fromDirectory({
+        dir: moddir,
+        walk: false,
+        env: env
+      });
       await pkg.install();
     });
   });
