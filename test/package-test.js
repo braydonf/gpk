@@ -24,11 +24,17 @@ const mkdir = util.promisify(fs.mkdir);
 
 const Environment = require('../lib/environment');
 const Package = require('../lib/package');
-const {datadir, testdir, testfile, unpack} = require('./common');
+const {datadir, testdir, testfile, unpack, envar} = require('./common');
 
 describe('Package', function() {
-  const stdout = fs.createWriteStream(`${testfile('stdout')}`);
-  const stderr = fs.createWriteStream(`${testfile('stderr')}`);
+  let stdout = fs.createWriteStream(`${testfile('stdout')}`);
+  let stderr = fs.createWriteStream(`${testfile('stderr')}`);
+
+  if (envar(process.env.TEST_LOG)) {
+    stdout = process.stdout;
+    stderr = process.stderr;
+  }
+
   const global = testdir('global');
   const home = testdir('home');
   const env = new Environment([process.stdin, stdout, stderr], home, global);

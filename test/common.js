@@ -38,9 +38,17 @@ async function unpack(tar, dst) {
   const {stdout, stderr} = await exec(cmd);
 }
 
+function envar(x) {
+  if (!x)
+    return false;
+
+  return JSON.parse(x);
+}
+
 module.exports = {
   datadir,
   testdir,
   testfile,
-  unpack
+  unpack,
+  envar
 }
