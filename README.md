@@ -8,14 +8,12 @@ Node.js libraries and applications.
 - Packages are decentralized via Git and can be hosted and published
   via any Git repository.
 - Signature verification via signed Git tags.
-- Deterministic installation of packages to support commiting and
-  bundling dependencies with Git.
+- Deterministic flat installation of packages to support commiting
+  and bundling dependencies with Git.
 - Resolves shared dependencies based on semantic versioning via Git
   tags (e.g. `v1.1.0`).
 - Node.js C/C++ addon build support with `node-gyp`.
-- Exclude files from a package with `.npmignore` similar to
-  `.gitignore` and remains compatible with `npm`.
-- Compatible with the `npm` command line interface.
+- Exclude files from a package with `.npmignore` and `.gitignore`.
 
 ## Install
 
@@ -66,3 +64,34 @@ Here is how to specify dependencies in `package.json`:
 The signature of the matching Git tag or commit is verified for each
 dependency. The dependencies must be from a Git repository. The referenced
 Git tag or commit must be signed and the necessary public keys imported.
+
+You can also use `gpk` specific shorthand in `package.json`:
+
+```json
+{
+  "remotes": {
+    "bcoin-org": "git+https://github.com/bcoin-org/",
+    "chjj": "git+https://github.com/chjj/"
+  },
+  "dependencies": {
+    "bcoin": "bcoin-org:bcoin.git#semver:~2.0.0",
+    "bcrypto": "bcoin-org:bcrypto.git#semver:~4.2.6",
+    "bmultisig": "bcoin-org:bmultisig.git#semver:~2.0.0",
+    "buffer-map": "chjj:buffer-map.git#semver:~0.0.7",
+    "n64": "chjj:n64.git#semver:~0.2.10"
+  }
+}
+```
+
+And specify Git branches:
+
+```json
+{
+  "remotes": {
+    "bcoin-org": "git+https://github.com/bcoin-org/",
+  },
+  "dependencies": {
+    "bcoin": "bcoin-org:bcoin.git#pkg-dependencies",
+  }
+}
+```
