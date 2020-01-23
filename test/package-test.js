@@ -19,6 +19,7 @@
 const assert = require('assert');
 const util = require('util');
 const fs = require('fs');
+const lstat = util.promisify(fs.lstat);
 const mkdir = util.promisify(fs.mkdir);
 
 const Environment = require('../lib/environment');
@@ -274,6 +275,27 @@ describe('Package', function() {
         env: env
       });
       await pkg.install();
+
+      async function exists(dst) {
+        let stats = null;
+        try {
+          stats = await lstat(dst);
+        } catch (err) {
+          if (err.code !== 'ENOENT')
+            throw err;
+
+        }
+        return stats ? true : false;
+      }
+
+      const base = `${modules}/unflat/a/node_modules/c/node_modules`;
+      const f1 = `${base}/d/node_modules/f`;
+      const f2 = `${base}/e/node_modules/f`;
+      const f3 = `${base}/f`;
+
+      assert.equal(await exists(f1), false);
+      assert.equal(await exists(f1), false);
+      assert.equal(await exists(f3), true);
     });
   });
 });
