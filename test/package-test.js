@@ -36,19 +36,23 @@ describe('Package', function() {
     stderr = process.stderr;
   }
 
-  const globaldir = testdir('global');
+  const gdir = testdir('global');
   const home = testdir('home');
-  const env = new Environment([process.stdin, stdout, stderr], home, globaldir);
+  const env = new Environment([process.stdin, stdout, stderr], home, gdir);
 
-  before(async () => {
+  async function ensure(dirs) {
     let last = null;
-    for (let dir of [globaldir, './lib', './node_modules']) {
+    for (let dir of dirs) {
       if (last)
         dir = path.join(last, dir);
 
       await mkdir(dir);
       last = dir;
     }
+  }
+
+  before(async () => {
+    await ensure([gdir, './lib', './node_modules']);
   });
 
   describe('resolveRemote()', function() {
@@ -318,6 +322,12 @@ describe('Package', function() {
     });
 
     it('install local globally', async () => {
+      const gdir = testdir('global');
+      const env = new Environment(
+        [process.stdin, stdout, stderr], home, gdir);
+
+      await ensure([gdir, './lib', './node_modules']);
+
       const modules = testdir('install-global');
       await mkdir(modules);
       await unpack(`${datadir}/modules.tar.gz`, modules);
@@ -331,7 +341,7 @@ describe('Package', function() {
 
       await pkg.install([], {global: true});
 
-      const libdir = `${globaldir}/lib/node_modules/foo`;
+      const libdir = `${gdir}/lib/node_modules/foo`;
       assert.equal(await exists(libdir), true);
     });
   });
