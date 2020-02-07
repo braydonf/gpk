@@ -19,6 +19,7 @@
 const assert = require('assert');
 const util = require('util');
 const fs = require('fs');
+const path = require('path');
 const lstat = util.promisify(fs.lstat);
 const mkdir = util.promisify(fs.mkdir);
 
@@ -35,9 +36,20 @@ describe('Package', function() {
     stderr = process.stderr;
   }
 
-  const global = testdir('global');
+  const globaldir = testdir('global');
   const home = testdir('home');
-  const env = new Environment([process.stdin, stdout, stderr], home, global);
+  const env = new Environment([process.stdin, stdout, stderr], home, globaldir);
+
+  before(async () => {
+    let last = null;
+    for (let dir of [globaldir, './lib', './node_modules']) {
+      if (last)
+        dir = path.join(last, dir);
+
+      await mkdir(dir);
+      last = dir;
+    }
+  });
 
   describe('resolveRemote()', function() {
     const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
@@ -255,6 +267,18 @@ describe('Package', function() {
   });
 
   describe('install()', function() {
+    async function exists(dst) {
+      let stats = null;
+      try {
+        stats = await lstat(dst);
+      } catch (err) {
+        if (err.code !== 'ENOENT')
+          throw err;
+
+      }
+      return stats ? true : false;
+    }
+
     it('should install dependencies', async () => {
       const modules = testdir('install');
       await mkdir(modules);
@@ -280,19 +304,8 @@ describe('Package', function() {
         walk: false,
         env: env
       });
+
       await pkg.install();
-
-      async function exists(dst) {
-        let stats = null;
-        try {
-          stats = await lstat(dst);
-        } catch (err) {
-          if (err.code !== 'ENOENT')
-            throw err;
-
-        }
-        return stats ? true : false;
-      }
 
       const base = `${modules}/unflat/a/node_modules/c/node_modules`;
       const f1 = `${base}/d/node_modules/f`;
@@ -302,6 +315,24 @@ describe('Package', function() {
       assert.equal(await exists(f1), false);
       assert.equal(await exists(f1), false);
       assert.equal(await exists(f3), true);
+    });
+
+    it('install local globally', async () => {
+      const modules = testdir('install-global');
+      await mkdir(modules);
+      await unpack(`${datadir}/modules.tar.gz`, modules);
+
+      const moddir = `${modules}/modules/foo`;
+      const pkg = await Package.fromDirectory({
+        dir: moddir,
+        walk: false,
+        env: env
+      });
+
+      await pkg.install([], {global: true});
+
+      const libdir = `${globaldir}/lib/node_modules/foo`;
+      assert.equal(await exists(libdir), true);
     });
   });
 });
