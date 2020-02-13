@@ -99,10 +99,15 @@ And specify Git branches:
 ### Configuration
 
 To customize the global installation path, use the
-`PREFIX` environment variable. For example:
+`PREFIX` environment variable, for example:
 
 ```sh
 export PREFIX=/home/user/global_node_modules
+```
+
+And then add that to your path, for example:
+```sh
+export PATH="$PREFIX:$PATH"
 ```
 
 This may be necessary if the installation of Node.js
