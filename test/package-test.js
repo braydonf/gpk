@@ -352,7 +352,8 @@ describe('Package', function() {
 
       await pkg.install([], {global: true});
 
-      const libdir = path.join(gdir, 'lib', 'node_modules', 'foo');
+      const libdir = Environment.libdir(gdir);
+
       assert.equal(await exists(libdir), true);
     });
   });
