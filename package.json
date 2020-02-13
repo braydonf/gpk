@@ -7,7 +7,7 @@
     "gpk": "./bin/gpk"
   },
   "scripts": {
-    "test": "./vendor/bmocha/bin/bmocha --reporter spec test/**/*-test.js"
+    "test": "node ./vendor/bmocha/bin/bmocha --reporter spec test/**/*-test.js"
   },
   "repository": {
     "type": "git",
