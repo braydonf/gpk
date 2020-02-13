@@ -27,7 +27,6 @@ const {
   matchTag,
   cloneRepo,
   verifyRepo,
-  archive,
   listTree,
   checksum,
   treeHash,
@@ -145,37 +144,6 @@ describe('Git', function() {
       }
 
       assert(!err);
-    });
-  });
-
-  describe('archive()/checksum()', function() {
-    it('should archive and checksum repository', async () => {
-      const git = path.join(tdir, 'repo', '.git');
-      let err = null;
-
-      const dst = `${testfile('archive.tar.gz')}`;
-      const expected = 'wNVracPFLWusleCon1AQu+ngVEmjZpliCCgUY2bcfVLr'
-            + 'JCrun9NOVAMM8XgUH3+A4gpbY2JEjmm1+yPii1wiAQ==';
-
-      try {
-        await archive(git, dst);
-      } catch (e) {
-        err = e;
-      }
-
-      assert(!err);
-
-      let digest = null;
-
-      try {
-        digest = await checksum(dst, 'sha512');
-      } catch (e) {
-        err = e;
-      }
-
-      assert(!err);
-      assert(digest);
-      assert.equal(digest.toString('base64'), expected);
     });
   });
 
