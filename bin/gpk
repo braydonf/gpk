@@ -26,6 +26,11 @@ const env = new Environment();
       valid: a => (a === true || a === false),
       fallback: false,
       aliases: ['g']
+    },
+    production: {
+      value: false,
+      valid: a => (a === true || a === false),
+      fallback: false
     }
   };
 
@@ -45,11 +50,7 @@ const env = new Environment();
     install:  {
       args: {min: 0, max: 1024},
       params: {
-        production: {
-          value: false,
-          valid: a => (a === true || a === false),
-          fallback: false
-        },
+        production: params.production,
         global: params.global
       },
       aliases: ['i'],
@@ -60,6 +61,7 @@ const env = new Environment();
     uninstall: {
       args: {min: 0, max: 1024},
       params: {
+        production: params.production,
         global: params.global
       },
       aliases: ['un'],
