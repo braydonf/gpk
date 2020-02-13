@@ -95,3 +95,33 @@ And specify Git branches:
   }
 }
 ```
+
+### Configuration
+
+To customize the global installation path, use the
+`PREFIX` environment variable. For example:
+
+```sh
+export PREFIX=/home/user/global_node_modules
+```
+
+This may be necessary if the installation of Node.js
+was via an operating system package manager or otherwise
+installed at `/usr/bin` or another path that requires
+root or admin permissions.
+
+## Testing
+
+Import the key used for signing:
+
+```sh
+gpg --recv-keys "5B7D C58D 90FE C1E9 90A3  10BA F24F 232D 108B 3AD4"
+```
+
+And run the tests:
+```sh
+gpk test
+```
+
+Test data in created in a temporary directory, using
+this format: `/tmp/gpk-test-<name>-<id>/`.
