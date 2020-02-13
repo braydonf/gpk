@@ -45,8 +45,7 @@ async function unpack(tar, dst) {
 }
 
 async function rimraf(p) {
-  const allowed = /^\/tmp\/gpk\-test\-(.*)$/;
-  if (!allowed.test(p))
+  if (p.indexOf(tmpdir()) !== 0)
     throw new Error(`Path not allowed: '${p}'.`);
 
   const stats = await lstat(p);
