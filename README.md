@@ -123,5 +123,12 @@ And run the tests:
 gpk test
 ```
 
+For detailed logging when running tests you can use
+the environment variable `TEST_LOG`, for example:
+
+```sh
+TEST_LOG=true gpk test
+```
+
 Test data in created in a temporary directory, using
 this format: `/tmp/gpk-test-<name>-<id>/`.
