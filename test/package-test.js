@@ -25,7 +25,7 @@ const mkdir = util.promisify(fs.mkdir);
 
 const Environment = require('../lib/environment');
 const Package = require('../lib/package');
-const {datadir, testdir, testfile, unpack, envar} = require('./common');
+const {datadir, testdir, testfile, unpack, envar, rimraf} = require('./common');
 
 describe('Package', function() {
   let stdout = fs.createWriteStream(`${testfile('stdout')}`);
@@ -36,7 +36,9 @@ describe('Package', function() {
     stderr = process.stderr;
   }
 
+  const tarball = path.join(datadir, 'modules.tar.gz');
   const gdir = testdir('global');
+  const tdir = testdir('modules');
   const home = testdir('home');
   const env = new Environment([process.stdin, stdout, stderr], home, gdir);
 
@@ -52,7 +54,13 @@ describe('Package', function() {
   }
 
   before(async () => {
-    await ensure([gdir, './lib', './node_modules']);
+    await ensure([gdir, 'lib', 'node_modules']);
+    await mkdir(tdir);
+    await unpack(tarball, tdir);
+  });
+
+  after(async () => {
+    await rimraf(tdir);
   });
 
   describe('resolveRemote()', function() {
@@ -245,7 +253,7 @@ describe('Package', function() {
     it('should locate and read package.json', async () => {
       let err = null;
 
-      const moddir = `${datadir}/modules/foo/lib`;
+      const moddir = path.join(tdir, 'modules', 'foo', 'lib');
       const mod = await Package.fromDirectory({
         dir: moddir,
         walk: true,
@@ -253,7 +261,7 @@ describe('Package', function() {
         parent: null
       });
 
-      assert.equal(mod.dir, `${datadir}/modules/foo`);
+      assert.equal(mod.dir, path.join(tdir, 'modules', 'foo'));
       assert.deepEqual(mod.info, {
         name: 'foo',
         version: '1.0.0',
@@ -286,9 +294,9 @@ describe('Package', function() {
     it('should install dependencies', async () => {
       const modules = testdir('install');
       await mkdir(modules);
-      await unpack(`${datadir}/modules.tar.gz`, modules);
+      await unpack(path.join(datadir, 'modules.tar.gz'), modules);
 
-      const moddir = `${modules}/modules/foo`;
+      const moddir = path.join(modules, 'modules', 'foo');
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -300,9 +308,9 @@ describe('Package', function() {
     it('should install unflat dependencies', async () => {
       const modules = testdir('install-unflat');
       await mkdir(modules);
-      await unpack(`${datadir}/unflat.tar.gz`, modules);
+      await unpack(path.join(datadir, 'unflat.tar.gz'), modules);
 
-      const moddir = `${modules}/unflat/a`;
+      const moddir = path.join(modules, 'unflat', 'a');
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -311,10 +319,11 @@ describe('Package', function() {
 
       await pkg.install();
 
-      const base = `${modules}/unflat/a/node_modules/c/node_modules`;
-      const f1 = `${base}/d/node_modules/f`;
-      const f2 = `${base}/e/node_modules/f`;
-      const f3 = `${base}/f`;
+      const base = path.join(modules, 'unflat', 'a', 'node_modules',
+                             'c', 'node_modules');
+      const f1 = path.join(base, 'd', 'node_modules', 'f');
+      const f2 = path.join(base, 'e', 'node_modules', 'f');
+      const f3 = path.join(base, 'f');
 
       assert.equal(await exists(f1), false);
       assert.equal(await exists(f1), false);
@@ -326,13 +335,13 @@ describe('Package', function() {
       const env = new Environment(
         [process.stdin, stdout, stderr], home, gdir);
 
-      await ensure([gdir, './lib', './node_modules']);
+      await ensure([gdir, 'lib', 'node_modules']);
 
       const modules = testdir('install-global');
       await mkdir(modules);
-      await unpack(`${datadir}/modules.tar.gz`, modules);
+      await unpack(path.join(datadir, 'modules.tar.gz'), modules);
 
-      const moddir = `${modules}/modules/foo`;
+      const moddir = path.join(modules, 'modules', 'foo');
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -341,7 +350,7 @@ describe('Package', function() {
 
       await pkg.install([], {global: true});
 
-      const libdir = `${gdir}/lib/node_modules/foo`;
+      const libdir = path.join(gdir, 'lib', 'node_modules', 'foo');
       assert.equal(await exists(libdir), true);
     });
   });

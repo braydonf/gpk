@@ -19,9 +19,15 @@
 const {resolve} = require('path');
 const {tmpdir} = require('os');
 const {randomBytes} = require('crypto');
+const path = require('path');
 const util = require('util');
 const child_process = require('child_process');
 const exec = util.promisify(child_process.exec);
+const fs = require('fs');
+const rmdir = util.promisify(fs.rmdir);
+const readdir = util.promisify(fs.readdir);
+const lstat = util.promisify(fs.lstat);
+const unlink = util.promisify(fs.unlink);
 
 const datadir = resolve(__dirname, './data');
 
@@ -38,6 +44,25 @@ async function unpack(tar, dst) {
   const {stdout, stderr} = await exec(cmd);
 }
 
+async function rimraf(p) {
+  const allowed = /^\/tmp\/gpk\-test\-(.*)$/;
+  if (!allowed.test(p))
+    throw new Error(`Path not allowed: '${p}'.`);
+
+  const stats = await lstat(p);
+
+  if (stats && stats.isDirectory()) {
+    const files = await readdir(p);
+
+    for (let i = 0; i < files.length; i++)
+      await rimraf(path.join(p, files[i]));
+
+    return await rmdir(p);
+  }
+
+  return await unlink(p);
+}
+
 function envar(x) {
   if (!x)
     return false;
@@ -50,5 +75,6 @@ module.exports = {
   testdir,
   testfile,
   unpack,
-  envar
+  envar,
+  rimraf
 }

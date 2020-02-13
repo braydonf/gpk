@@ -17,7 +17,10 @@
 'use strict';
 
 const assert = require('assert');
-const {resolve} = require('path');
+const util = require('util');
+const path = require('path');
+const fs = require('fs');
+const mkdir = util.promisify(fs.mkdir);
 
 const {
   listTags,
@@ -31,12 +34,24 @@ const {
   cloneFiles
 } = require('../lib/git');
 
-const {datadir, testdir, testfile} = require('./common');
+const {datadir, testdir, testfile, unpack, rimraf} = require('./common');
 
 describe('Git', function() {
+  const repo = path.join(datadir, 'repo.tar.gz');
+  const tdir = testdir('repo');
+
+  before(async () => {
+    await mkdir(tdir);
+    await unpack(repo, tdir);
+  });
+
+  after(async () => {
+    await rimraf(tdir);
+  });
+
   describe('listTags()', function() {
     it('should find all tags', async () => {
-      const git = `${datadir}/repo/.git`;
+      const git = path.join(tdir, 'repo', '.git');
 
       const tags = await listTags(git);
       assert.deepEqual(tags, {
@@ -83,7 +98,7 @@ describe('Git', function() {
   describe('cloneRepo()/verifyRepo()', function() {
     it('should clone and verify signature', async () => {
       let err = null;
-      const git = `${datadir}/repo/.git`;
+      const git = path.join(tdir, 'repo', '.git');
       const tag = 'v1.1.0';
       const dst = testdir('clone');
 
@@ -106,7 +121,7 @@ describe('Git', function() {
 
     it('should clone and verify lightweight tag', async () => {
       let err = null;
-      const git = `${datadir}/repo/.git`;
+      const git = path.join(tdir, 'repo', '.git');
 
       // The tag was created lightweight via `git tag v2.1.0` instead of
       // `git tag -a v2.1.0 -m "v2.1.0"`. Thus the command `git verify-tag`
@@ -135,7 +150,7 @@ describe('Git', function() {
 
   describe('archive()/checksum()', function() {
     it('should archive and checksum repository', async () => {
-      const git = `${datadir}/repo/.git`;
+      const git = path.join(tdir, 'repo', '.git');
       let err = null;
 
       const dst = `${testfile('archive.tar.gz')}`;
@@ -166,8 +181,8 @@ describe('Git', function() {
 
   describe('treeHash()', function() {
     it('should compute a sha512 tree of git tree', async () => {
-      const git = `${datadir}/repo/.git`;
-      const base = `${datadir}/repo`;
+      const git = path.join(tdir, 'repo', '.git');
+      const base = path.join(tdir, 'repo');
 
       let err = null;
       let digest = null;
@@ -192,7 +207,7 @@ describe('Git', function() {
   describe('cloneFiles()', function() {
     it('should clone files to destination', async () => {
       let err = null;
-      const git = `${datadir}/repo/.git`;
+      const git = path.join(tdir, 'repo', '.git');
       const dst = testdir('clonefiles');
 
       try {
