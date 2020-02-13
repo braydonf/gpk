@@ -28,6 +28,8 @@ const Package = require('../lib/package');
 const {datadir, testdir, testfile, unpack, envar, rimraf} = require('./common');
 
 describe('Package', function() {
+  this.timeout(60000);
+
   let stdout = fs.createWriteStream(`${testfile('stdout')}`);
   let stderr = fs.createWriteStream(`${testfile('stderr')}`);
 
