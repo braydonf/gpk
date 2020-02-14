@@ -107,7 +107,7 @@ export PREFIX=/home/user/global_node_modules
 
 And then add that to your path, for example:
 ```sh
-export PATH="$PREFIX:$PATH"
+export PATH="$PREFIX/bin:$PATH"
 ```
 
 This may be necessary if the installation of Node.js
