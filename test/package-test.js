@@ -32,6 +32,7 @@ describe('Package', function() {
 
   let stdout = fs.createWriteStream(`${testfile('stdout')}`);
   let stderr = fs.createWriteStream(`${testfile('stderr')}`);
+  const stdin = process.stdin;
 
   if (envar(process.env.TEST_LOG)) {
     stdout = process.stdout;
@@ -42,7 +43,7 @@ describe('Package', function() {
   const gdir = testdir('global');
   const tdir = testdir('modules');
   const home = testdir('home');
-  const env = new Environment([process.stdin, stdout, stderr], home, gdir);
+  const env = new Environment([stdin, stdout, stderr], home, gdir);
 
   async function ensure(dirs) {
     let last = null;
@@ -69,7 +70,7 @@ describe('Package', function() {
     const hash = '3c0cfdd8445ec81386daa187feb2d32b9f4d89a1';
 
     const remotes = {
-      local: `file:${datadir}`,
+      local: `git+file://${datadir}`,
       onion: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22',
       gitlab: 'https://gitlab.com',
       github: 'https://github.com'
@@ -137,7 +138,7 @@ describe('Package', function() {
           src: 'local:repo#semver:~1.1.7'
         },
         output: {
-          git: `${datadir}/repo/.git`,
+          git: `file://${datadir}/repo/.git`,
           version: '~1.1.7',
           branch: null
         }
@@ -148,7 +149,7 @@ describe('Package', function() {
           src: 'local:#semver:~1.1.7'
         },
         output: {
-          git: `${datadir}/repo/.git`,
+          git: `file://${datadir}/repo/.git`,
           version: '~1.1.7',
           branch: null
         }
@@ -269,7 +270,7 @@ describe('Package', function() {
         version: '1.0.0',
         main: './lib/index.js',
         remotes: {
-          local: 'file:../',
+          local: 'git+file://',
         },
         dependencies: {
           bar: 'local:bar#semver:^1.0.0',
@@ -297,8 +298,11 @@ describe('Package', function() {
       const modules = testdir('install');
       await mkdir(modules);
       await unpack(path.join(datadir, 'modules.tar.gz'), modules);
+      const basedir = path.join(modules, 'modules');
+      const moddir = path.join(basedir, 'foo');
 
-      const moddir = path.join(modules, 'modules', 'foo');
+      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -311,8 +315,11 @@ describe('Package', function() {
       const modules = testdir('install-unflat');
       await mkdir(modules);
       await unpack(path.join(datadir, 'unflat.tar.gz'), modules);
+      const basedir = path.join(modules, 'unflat');
+      const moddir = path.join(basedir, 'a');
 
-      const moddir = path.join(modules, 'unflat', 'a');
+      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -332,18 +339,17 @@ describe('Package', function() {
       assert.equal(await exists(f3), true);
     });
 
-    it('install local globally', async () => {
+    it('should install local globally', async () => {
       const gdir = testdir('global');
-      const env = new Environment(
-        [process.stdin, stdout, stderr], home, gdir);
-
       await ensure([gdir, 'lib', 'node_modules']);
-
       const modules = testdir('install-global');
       await mkdir(modules);
       await unpack(path.join(datadir, 'modules.tar.gz'), modules);
+      const basedir = path.join(modules, 'modules');
+      const moddir = path.join(basedir, 'foo');
 
-      const moddir = path.join(modules, 'modules', 'foo');
+      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+
       const pkg = await Package.fromDirectory({
         dir: moddir,
         walk: false,
@@ -351,6 +357,26 @@ describe('Package', function() {
       });
 
       await pkg.install([], {global: true});
+
+      const libdir = Environment.libdir(gdir);
+
+      assert.equal(await exists(libdir), true);
+    });
+
+    it('should install globally', async () => {
+      const gdir = testdir('global');
+      await ensure([gdir, 'lib', 'node_modules']);
+      const modules = testdir('install-global');
+      await mkdir(modules);
+      await unpack(path.join(datadir, 'modules.tar.gz'), modules);
+      const basedir = path.join(modules, 'modules');
+      const moddir = path.join(basedir, 'foo');
+
+      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+
+      const pkg = new Package({env: env});
+
+      await pkg.install([`file://${moddir}`], {global: true});
 
       const libdir = Environment.libdir(gdir);
 
