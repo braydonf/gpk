@@ -31,8 +31,20 @@ const unlink = util.promisify(fs.unlink);
 
 const datadir = resolve(__dirname, './data');
 
-function testdir(name) {
-  return `${tmpdir()}/gpk-test-${name}-${randomBytes(4).toString('hex')}`;
+function testdir(name, cleanup) {
+  const dir = `${tmpdir()}/gpk-test-${name}-${randomBytes(4).toString('hex')}`;
+
+  if (cleanup)
+    cleanup.push(dir);
+
+  return dir;
+}
+
+async function clean(paths) {
+  for (const p of paths)
+    await rimraf(p);
+
+  paths.length = 0;
 }
 
 function testfile(name) {
@@ -72,6 +84,7 @@ function envar(x) {
 module.exports = {
   datadir,
   testdir,
+  clean,
   testfile,
   unpack,
   envar,

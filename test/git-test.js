@@ -33,11 +33,13 @@ const {
   cloneFiles
 } = require('../lib/git');
 
-const {datadir, testdir, testfile, unpack, rimraf} = require('./common');
+const {datadir, testdir, clean, testfile, unpack} = require('./common');
 
 describe('Git', function() {
   const repo = path.join(datadir, 'repo.tar.gz');
-  const tdir = testdir('repo');
+  const tcleanup = [];
+  const tdir = testdir('repo', tcleanup);
+  const cleanup = [];
 
   before(async () => {
     await mkdir(tdir);
@@ -45,7 +47,11 @@ describe('Git', function() {
   });
 
   after(async () => {
-    await rimraf(tdir);
+    await clean(tcleanup);
+  });
+
+  afterEach(async () => {
+    await clean(cleanup);
   });
 
   describe('listTags()', function() {
@@ -99,7 +105,7 @@ describe('Git', function() {
       let err = null;
       const git = path.join(tdir, 'repo', '.git');
       const tag = 'v1.1.0';
-      const dst = testdir('clone');
+      const dst = testdir('clone', cleanup);
 
       try {
         await cloneRepo(tag, git, dst);
@@ -127,7 +133,7 @@ describe('Git', function() {
       // can not be used.
       const tag = 'v2.1.0';
       const commit = '3d2115aa2e86d8c08ce1639d177757aa1ce85799';
-      const dst = testdir('clonelight');
+      const dst = testdir('clonelight', cleanup);
 
       try {
         await cloneRepo(tag, git, dst);
@@ -176,7 +182,7 @@ describe('Git', function() {
     it('should clone files to destination', async () => {
       let err = null;
       const git = path.join(tdir, 'repo', '.git');
-      const dst = testdir('clonefiles');
+      const dst = testdir('clonefiles', cleanup);
 
       try {
         await cloneFiles(git, dst);

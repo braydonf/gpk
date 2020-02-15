@@ -25,13 +25,21 @@ const mkdir = util.promisify(fs.mkdir);
 
 const Environment = require('../lib/environment');
 const Package = require('../lib/package');
-const {datadir, testdir, testfile, unpack, envar, rimraf} = require('./common');
+
+const {datadir, testdir, clean, testfile, unpack, envar} = require('./common');
 
 describe('Package', function() {
   this.timeout(60000);
 
-  let stdout = fs.createWriteStream(`${testfile('stdout')}`);
-  let stderr = fs.createWriteStream(`${testfile('stderr')}`);
+  const stdoutPath = `${testfile('stdout')}`;
+  const stderrPath = `${testfile('stderr')}`
+  const tcleanup = [stdoutPath, stderrPath];
+  const gdir = testdir('global', tcleanup);
+  const tdir = testdir('modules', tcleanup);
+  const hdir = testdir('home', tcleanup);
+
+  let stdout = fs.createWriteStream(stdoutPath);
+  let stderr = fs.createWriteStream(stderrPath);
   const stdin = process.stdin;
 
   if (envar(process.env.TEST_LOG)) {
@@ -40,10 +48,8 @@ describe('Package', function() {
   }
 
   const tarball = path.join(datadir, 'modules.tar.gz');
-  const gdir = testdir('global');
-  const tdir = testdir('modules');
-  const home = testdir('home');
-  const env = new Environment([stdin, stdout, stderr], home, gdir);
+  const env = new Environment([stdin, stdout, stderr], hdir, gdir);
+  const cleanup = [];
 
   async function ensure(dirs) {
     let last = null;
@@ -63,7 +69,11 @@ describe('Package', function() {
   });
 
   after(async () => {
-    await rimraf(tdir);
+    await clean(tcleanup);
+  });
+
+  afterEach(async () => {
+    await clean(cleanup);
   });
 
   describe('resolveRemote()', function() {
@@ -295,13 +305,13 @@ describe('Package', function() {
     }
 
     it('should install dependencies', async () => {
-      const modules = testdir('install');
+      const modules = testdir('install', cleanup);
       await mkdir(modules);
       await unpack(path.join(datadir, 'modules.tar.gz'), modules);
       const basedir = path.join(modules, 'modules');
       const moddir = path.join(basedir, 'foo');
 
-      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+      const env = new Environment([stdin, stdout, stderr], hdir, gdir, basedir);
 
       const pkg = await Package.fromDirectory({
         dir: moddir,
@@ -312,13 +322,13 @@ describe('Package', function() {
     });
 
     it('should install unflat dependencies', async () => {
-      const modules = testdir('install-unflat');
+      const modules = testdir('install-unflat', cleanup);
       await mkdir(modules);
       await unpack(path.join(datadir, 'unflat.tar.gz'), modules);
       const basedir = path.join(modules, 'unflat');
       const moddir = path.join(basedir, 'a');
 
-      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+      const env = new Environment([stdin, stdout, stderr], hdir, gdir, basedir);
 
       const pkg = await Package.fromDirectory({
         dir: moddir,
@@ -340,15 +350,15 @@ describe('Package', function() {
     });
 
     it('should install local globally', async () => {
-      const gdir = testdir('global');
+      const gdir = testdir('global', cleanup);
       await ensure([gdir, 'lib', 'node_modules']);
-      const modules = testdir('install-global');
+      const modules = testdir('install-global', cleanup);
       await mkdir(modules);
       await unpack(path.join(datadir, 'modules.tar.gz'), modules);
       const basedir = path.join(modules, 'modules');
       const moddir = path.join(basedir, 'foo');
 
-      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+      const env = new Environment([stdin, stdout, stderr], hdir, gdir, basedir);
 
       const pkg = await Package.fromDirectory({
         dir: moddir,
@@ -364,15 +374,15 @@ describe('Package', function() {
     });
 
     it('should install globally', async () => {
-      const gdir = testdir('global');
+      const gdir = testdir('global', cleanup);
       await ensure([gdir, 'lib', 'node_modules']);
-      const modules = testdir('install-global');
+      const modules = testdir('install-global', cleanup);
       await mkdir(modules);
       await unpack(path.join(datadir, 'modules.tar.gz'), modules);
       const basedir = path.join(modules, 'modules');
       const moddir = path.join(basedir, 'foo');
 
-      const env = new Environment([stdin, stdout, stderr], home, gdir, basedir);
+      const env = new Environment([stdin, stdout, stderr], hdir, gdir, basedir);
 
       const pkg = new Package({env: env});
 
