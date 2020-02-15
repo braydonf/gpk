@@ -81,7 +81,8 @@ describe('Package', function() {
 
     const remotes = {
       local: `git+file://${datadir}`,
-      onion: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22',
+      onion: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa' +
+        '.onion:22',
       gitlab: 'https://gitlab.com',
       github: 'https://github.com'
     };
@@ -137,7 +138,9 @@ describe('Package', function() {
           src: 'onion:bcoin/bcoin#semver:~1.1.7'
         },
         output: {
-          git: 'ssh://git@fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa.onion:22/bcoin/bcoin.git',
+          git: 'ssh://git@' +
+            'fszyuaceipjhnbyy44mtfmoocwzgzunmdu46votrm5c72poeeffa' +
+            '.onion:22/bcoin/bcoin.git',
           version: '~1.1.7',
           branch: null
         }
