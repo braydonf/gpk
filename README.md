@@ -138,6 +138,48 @@ provides the following benefits:
 Note: You can use `git commit --author="<alternative-authors>"` when
 commiting a large number of dependencies for purposes of commit statistics.
 
+### Migration
+
+Nearly all existing Node.js modules can be migrated to use GPK with signature
+verification. This is because Git and [signed tags][signed-tags] are already
+widely for Node.js modules. Converting to use GPK is handled by specifying
+the Git remote in `package.json`.
+
+The following `package.json` specification:
+
+```
+{
+  "dependencies": {
+    "bcrypto": "~5.0.4"
+  }
+}
+```
+
+Is replaced with a Git remote:
+```
+{
+  "dependencies": {
+    "bcrypto": "git+https://github.com/bcoin-org/bcrypto.git#semver:~5.0.4"
+  }
+}
+```
+
+For modules that do not themselves specify Git remotes for their dependencies.
+It will be necessary to specify those dependencies as well, for example:
+
+```
+{
+  "dependencies": {
+    "bcrypto": "git+https://github.com/bcoin-org/bcrypto.git#semver:~5.0.4",
+    "bufio": "git+https://github.com/bcoin-org/bufio.git#semver:~1.0.6",
+    "loady": "git+https://github.com/chjj/loady.git#semver:~0.0.1",
+    "nan": "git+https://github.com/braydonf/nan.git#semver:~2.14.0"
+  }
+}
+```
+
+Otherwise there would be an error, such as `Error: Unknown remote for 'bufio'`.
+
 ### Configuration
 
 To customize the global installation path, use the
@@ -179,3 +221,5 @@ TEST_LOG=true gpk test
 
 Test data in created in a temporary directory, using
 this format: `/tmp/gpk-test-<name>-<id>/`.
+
+[signed-tags]: https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work
