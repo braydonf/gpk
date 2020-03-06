@@ -112,9 +112,9 @@ as specified by the semantic version in `package.json`, it's
 necessary to update the `package.json` specification before
 installing.
 
-#### Commit dependencies
+#### Committing dependencies
 
-It is recommend to commit dependencies into the Git repository, this
+It is recommended to commit dependencies into the Git repository, this
 provides the following benefits:
 - Guarantee of availability of dependencies. It adds a mirror of the
   remote code, and thus a guarantee that the exact dependency is available
@@ -140,10 +140,10 @@ commiting a large number of dependencies for purposes of commit statistics.
 
 ### Migration
 
-Nearly all existing Node.js modules can be migrated to use GPK with signature
+Nearly all existing Node.js modules can be migrated to use `gpk` with signature
 verification. This is because Git and [signed tags][signed-tags] are already
-widely for Node.js modules. Converting to use GPK is handled by specifying
-the Git remote in `package.json`.
+widely for JavaScript and Node.js modules. Migrating to use `gpk` is handled
+by specifying the Git remote.
 
 The following `package.json` specification:
 
@@ -164,8 +164,8 @@ Is replaced with a Git remote:
 }
 ```
 
-For modules that do not themselves specify Git remotes for their dependencies.
-It will be necessary to specify those dependencies as well, for example:
+For modules that do not specify Git remotes for their dependencies, it will
+be necessary to specify those dependencies as well, for example:
 
 ```
 {
