@@ -46,7 +46,7 @@ Install globally:
 - `gpk init` Initialize a package.
 - `gpk help` Display all available commands.
 
-### Specifying dependencies
+### Managing dependencies
 
 Here is how to specify dependencies in `package.json`:
 
@@ -95,6 +95,48 @@ And specify Git branches:
   }
 }
 ```
+
+#### Upgrading dependencies
+
+The behavior of `gpk` is that `gpk install` will not replace an existing
+module, and will otherwise give an error if an existing installation does
+not satisfy the current `package.json` specification.
+
+To upgrade a dependency:
+
+- Remove the dependency from `node_modules`.
+- Run `gpk install` again to fetch an updated version.
+
+To upgrade to a version greater than the current version
+as specified by the semantic version in `package.json`, it's
+necessary to update the `package.json` specification before
+installing.
+
+#### Commit dependencies
+
+It is recommend to commit dependencies into the Git repository, this
+provides the following benefits:
+- Guarantee of availability of dependencies. It adds a mirror of the
+  remote code, and thus a guarantee that the exact dependency is available
+  regardless of network, third-party service, or module availability.
+- Provides integrity of dependencies. This is functionally similar
+  to `package-lock.json` or `npm-shrinkwrap.json` from npm-land. For
+  committed dependencies to be used when the package is a dependency, the
+  dependencies should be added to `bundleDependencies` in `package.json`.
+- Removes the dependency upon a package manager for basic installation,
+  as the dependencies are already available. Installation of `gpk` is
+  only necessary for the management and upgrade of dependencies by
+  contributors and maintainers.
+- Compatibility with other package managers for building native addons.
+  The use of `gpk rebuild`, `npm rebuild` or `yarn rebuild` can all
+  be used.
+- Efficiency of installation. It's not necessary to clone and verify
+  each dependency, as they are already available. This is especially
+  relevant when branches or specific commits are used instead of tagged
+  releases of a dependency.
+
+Note: You can use `git commit --author="<alternative-authors>"` when
+commiting a large number of dependencies for purposes of commit statistics.
 
 ### Configuration
 
